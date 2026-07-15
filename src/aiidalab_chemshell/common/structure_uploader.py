@@ -84,7 +84,8 @@ class StructureSelectionWidget(VBox, HasTraits):
             if self.structure_data:
                 self.structure_data = None
             self.structure_file = change["new"]
-            self._on_file_upload(change)
+            self.viewer = StructureViewWidget(change["new"])
+            self._update_children()
         elif isinstance(change["new"], StructureData):
             if self.structure_file:
                 self.structure_file = None
