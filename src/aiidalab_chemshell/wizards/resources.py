@@ -3,7 +3,7 @@
 import aiidalab_widgets_base as awb
 import ipywidgets as ipw
 import traitlets as tl
-from aiida.orm import Code, QueryBuilder
+from aiida.orm import ContainerizedCode, InstalledCode, PortableCode, QueryBuilder
 
 from aiidalab_chemshell.models.resources import ComputationalResourcesModel
 from aiidalab_chemshell.utils import test_aiida_chemsh_import
@@ -105,10 +105,11 @@ class ResourceSetupBox(ipw.VBox):
         super().__init__(layout={"margin": "auto", "width": "80%"}, **kwargs)
         self.model = model
 
-        self.code = ipw.Combobox(
+        self.code = ipw.Dropdown(
             description="Code:",
             layout={"width": "60%"},
         )
+        self.update_codes()
         tl.link((self.code, "value"), (self.model, "code_label"))
         self.refresh_codes_button = ipw.Button(
             description="Refresh",
@@ -121,7 +122,6 @@ class ResourceSetupBox(ipw.VBox):
         self.code_box = ipw.HBox(
             layout={"width": "100%"}, children=[self.code, self.refresh_codes_button]
         )
-        self.update_codes()
 
         # tl.link((self.code, "value"), (self.model, "code"))
 
@@ -164,9 +164,9 @@ class ResourceSetupBox(ipw.VBox):
     def update_codes(self, _=None) -> None:
         """Update the list of available codes."""
         qb = QueryBuilder()
-        qb.append(Code, project=["label", "id"])
+        qb.append((InstalledCode, ContainerizedCode, PortableCode))
         codes = qb.all()
-        code_labels = [f"{label}" for label, id in codes]
+        code_labels = [f"{code[0].label}@{code[0].computer.label}" for code in codes]
         self.code.options = code_labels
         if code_labels:
             self.code.value = code_labels[0]
