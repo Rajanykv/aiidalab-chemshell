@@ -158,10 +158,6 @@ class ChemShellProcess:
                 }
             )
         # Setup metadata and resource parameters
-        if self.model.resource_model.ncpus > 1:
-            builder.metadata.options.withmpi = True
-        else:
-            builder.metadata.options.withmpi = False
         builder.metadata.options.resources = {
             "num_mpiprocs_per_machine": self.model.resource_model.ncpus,
             "num_cores_per_machine": self.model.resource_model.ncpus,
