@@ -2,12 +2,14 @@
 
 from aiida.orm import SinglefileData, StructureData, TrajectoryData
 from aiidalab_widgets_base import SmilesWidget
-from alc_aiidalab_widgets.widgets import FileUploadWidget, StructureViewWidget
+from alc_aiidalab_widgets.widgets import (
+    AiiDADatabaseQueryWidget,
+    FileUploadWidget,
+    StructureViewWidget,
+)
 from ase import Atoms
 from ipywidgets import HTML, Tab, VBox, dlink
 from traitlets import HasTraits, Instance
-
-from aiidalab_chemshell.common.database import AiiDADatabaseWidget
 
 
 class StructureSelectionWidget(VBox, HasTraits):
@@ -28,7 +30,7 @@ class StructureSelectionWidget(VBox, HasTraits):
         ]
 
         # AiiDA database
-        self.database_widget = AiiDADatabaseWidget(
+        self.database_widget = AiiDADatabaseQueryWidget(
             title="AiiDA Database",
             query=[SinglefileData, StructureData],
         )

@@ -4,10 +4,10 @@ from datetime import datetime
 
 from aiida.orm import CalcJobNode, WorkChainNode
 from aiidalab_widgets_base import ProcessNodesTreeWidget
+from alc_aiidalab_widgets.widgets import AiiDADatabaseQueryWidget
 from IPython.display import display
 from ipywidgets import HTML, VBox, dlink
 
-from aiidalab_chemshell.common.database import AiiDADatabaseWidget
 from aiidalab_chemshell.common.navigation import QuickAccessButtons
 from aiidalab_chemshell.common.node_viewers import CustomAiidaNodeViewWidget
 from aiidalab_chemshell.models.process import ProcessModel
@@ -87,7 +87,7 @@ class HistoryAppView(VBox):
             </p>
             """
         )
-        self.lookup_widget = AiiDADatabaseWidget(
+        self.lookup_widget = AiiDADatabaseQueryWidget(
             "Process Lookup", [CalcJobNode, WorkChainNode]
         )
         self.lookup_widget.observe(self._update_node_view, "data_object")
