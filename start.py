@@ -9,9 +9,9 @@ def get_start_widget(appbase, jupbase, notebase):
     """Get the AiiDAlab app's start banner."""
     logo = ipw.HTML(
         f"""
-        <div class="app-container">
+        <div class="app-container" style="margin: auto;width: 600px;">
             <a class="logo" href="{appbase}/notebooks/main.ipynb" target="_blank">
-            <img src="{appbase}/images/alc.svg" alt="ALC AiiDAlab App Logo" />
+            <img src="{appbase}/images/chemshell.png" alt="ChemShell Logo" />
             </a>
         </div>
         """

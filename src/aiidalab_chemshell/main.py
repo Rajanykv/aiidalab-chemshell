@@ -30,8 +30,8 @@ class MainAppView(ipw.VBox):
         """MainAppView constructor."""
         logo = ipw.HTML(
             """
-            <div class="app-container logo" style="width: 300px;">
-                <img src="../images/alc.svg" alt="ALC AiiDAlab App Logo" />
+            <div class="app-container logo" style="width: 500px;">
+                <img src="../images/chemshell.png" alt="ChemShell Logo" />
             </div>
             """,
             layout={"margin": "auto"},
