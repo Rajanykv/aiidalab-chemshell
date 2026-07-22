@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.abspath('../../src'))
 project = 'AiiDAlab ChemShell'
 copyright = '2026, Ada Lovelace Center (STFC)'
 author = 'Dr. Benjamin T. Speake'
-release = '0.0.1'
+release = '0.2.3'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -36,3 +36,4 @@ html_static_path = ['_static']
 html_theme_options = {
     "source_url": "https://github.com/stfc/aiidalab-chemshell"
 }
+# html_logo = "../../images/chemshell.png"

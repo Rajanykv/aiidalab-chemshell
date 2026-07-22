@@ -132,6 +132,10 @@ if one is supported for the data type.
 Available Workflow Configurations
 ---------------------------------
 
+All the currently available workflow methods are described here. More workflows are always being developed and added. 
+If there are any that you would like to see within this plugin get in touch via the 
+`GitHub page <https://github.com/stfc/aiidalab-chemshell>`_\. 
+
 Geometry Optimisation
 ~~~~~~~~~~~~~~~~~~~~~
 
@@ -141,15 +145,65 @@ of the optimised structure. It can be configured for both QM, MM or QM/MM based 
 default parameters. The quality of the DFT portion of the calculation can be tuned with the *Basis Quality* 
 option, however this creates a trade-off with the time required for the calculations. 
 
-The *MM* components of the workflow can be enabled by checking the *Use QM/MM* box which will enable the 
+The *MM* components of the workflow can be enabled by checking the *Use QM/MM* box which will enable the
 remaining input fields. When using *MM* within a calculation the user must provide a pre-configured force
-field in the required **DL_POLY** format, which needs to be provided in the *Force Field:* input section. 
+field in the required **DL_POLY** format, which needs to be provided in the *Force Field:* input section.
 Additionally, the user needs to specify which atoms to apply the *QM* theory portion of a *QM/MM* calculation
-method to, which can be provided as a comma separated list in the *QM Region:* input section. 
+method to, which can be provided as a comma separated list in the *QM Region:* input section.
+
+Most of the other available workflows share these same *QM* and *QM/MM* configuration options (*Basis Quality*,
+*Use QM/MM*, *Force Field:* and *QM Region:*), which behave as described above. Where a workflow supports the
+*Show Advanced Options* checkbox, enabling it replaces the simplified *Basis Quality* dropdown with direct
+control over the *QM Backend*, *Basis Set* and *Functional* used for the quantum mechanical portion of the
+calculation.
 
 
+Single Point Energy
+~~~~~~~~~~~~~~~~~~~
+
+This workflow performs a single point energy evaluation on the provided input structure, without altering its
+geometry. It supports both *QM* and *QM/MM* methods using the shared configuration options described above.
+
+Two additional sets of options are provided which control what is calculated alongside the energy:
+
+- **Energy Derivatives** - the *First Derivative* and *Second Derivative* checkboxes request the gradients and
+  Hessian of the energy respectively.
+- **Vibrational Frequencies** - when checked, a vibrational frequency calculation is performed on the input
+  structure in place of a standard single point evaluation.
+
+This workflow is also the basis of the batch processing page, where the same configuration is applied to every
+structure in a batch (see :ref:`batch_processing`).
+
+
+Isolated Atomic Energies
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This workflow extracts every unique atom type (element) present in the input structure and computes the isolated
+*QM* energy of each one individually. It is useful for reference calculations such as evaluating atomisation or
+cohesive energies, where the energies of the separated constituent atoms are required.
+
+As the calculation operates on isolated single atoms it is a *QM* only workflow; the *QM/MM*, energy derivative
+and vibrational frequency options are therefore not applicable. Only the *Basis Quality* option (or the *QM
+Backend*, *Basis Set* and *Functional* under *Show Advanced Options*) needs to be configured.
 
 .. note:: 
 
-    More workflows are always being developed and added. If there are any that you would like to see within
-    this plugin get in touch via the GitHub discussions page. 
+  Not all QM backends supported by ChemShell are able to take single atoms as an input. It is recommended the
+  user stick to the default "NWChem" backend for any workflows that require atomistic energies.
+
+
+Nudged Elastic Band
+~~~~~~~~~~~~~~~~~~~
+
+This workflow performs a nudged elastic band (NEB) calculation to determine the minimum energy pathway between
+two structures, for example to locate a transition state connecting a set of reactants and products. The
+*initial* structure is provided in the usual :ref:`Structure Input <workflows>` step, whilst the *final*
+structure is uploaded directly within the NEB tab itself using the embedded structure selection widget.
+
+Beyond the second structure input, the NEB workflow uses the same shared *QM* and *QM/MM* configuration options
+described for the geometry optimisation workflow.
+
+.. note::
+
+    A NEB calculation cannot be submitted until a valid second structure has been provided; the workflow will
+    report an error if the *final* structure is missing.

@@ -114,6 +114,7 @@ different components within the plugin application.
 The navigation buttons access the following pages:
 
 - *New Calculation* -> Accesses the main workflow submission page. (:ref:`workflows`)
+- *Batch Calculation* -> Accesses the batch processing page for running a single point energy calculation across a set of structures. (:ref:`batch_processing`)
 - *History* -> Accesses previous calculations and their results. (:ref:`history_page`)
 - *Setup Resources* -> Accesses the AiiDA computer/code setup page. (:ref:`resource_management`)
 - *Documentation* -> Link to this documentation.

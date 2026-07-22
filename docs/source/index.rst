@@ -16,6 +16,7 @@ ChemShell plugin please see `aiida-chemshell <https://stfc.github.io/aiida-chems
 
    user_guide/getting_started
    user_guide/workflows
+   user_guide/batch_processing
    user_guide/history_page
    user_guide/resource_management
    user_guide/node_viewers
