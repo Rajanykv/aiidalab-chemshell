@@ -210,6 +210,9 @@ class ChemShellProcess:
             "num_machines": 1,
             "tot_num_mpiprocs": self.model.resource_model.ncpus,
         }
+        # Only set ``withmpi`` when the code itself does not declare it.
+        if builder.code.with_mpi is None:
+            builder.metadata.options.withmpi = self.model.resource_model.ncpus > 1
         # Submit and apply the label/description to the CalcJob
         self.node = submit(builder)
         self.node.label = self.model.resource_model.process_label
@@ -255,6 +258,11 @@ class ChemShellProcess:
             "num_machines": 1,
             "tot_num_mpiprocs": self.model.resource_model.ncpus,
         }
+        # Only set ``withmpi`` when the code itself does not declare it.
+        if builder.chemsh.code.with_mpi is None:
+            builder.chemsh.metadata.options.withmpi = (
+                self.model.resource_model.ncpus > 1
+            )
         self.node = submit(builder)
         self.node.label = self.model.resource_model.process_label
         self.node.description = self.model.resource_model.process_description
