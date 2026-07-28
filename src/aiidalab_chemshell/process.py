@@ -284,6 +284,19 @@ class ChemShellProcess:
                 "basis": self.model.workflow_model.basis_set,
             }
         )
+        # The IsolatedAtomicEnergiesWorkChain forwards these options to each of
+        # its per-atom sub-calculations.
+        builder.chemsh.metadata.options.resources = {
+            "num_mpiprocs_per_machine": self.model.resource_model.ncpus,
+            "num_cores_per_machine": self.model.resource_model.ncpus,
+            "num_machines": 1,
+            "tot_num_mpiprocs": self.model.resource_model.ncpus,
+        }
+        # Only set ``withmpi`` when the code itself does not declare it.
+        if builder.code.with_mpi is None:
+            builder.chemsh.metadata.options.withmpi = (
+                self.model.resource_model.ncpus > 1
+            )
         self.node = submit(builder)
         self.node.label = self.model.resource_model.process_label
         self.node.description = self.model.resource_model.process_description
