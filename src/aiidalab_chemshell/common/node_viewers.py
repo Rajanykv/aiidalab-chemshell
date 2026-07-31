@@ -3,7 +3,7 @@
 import aiidalab_widgets_base as awb
 import ipywidgets as ipw
 from aiida.common.links import LinkType
-from aiida.orm import ArrayData, Node, ProcessNode
+from aiida.orm import ArrayData, Node, ProcessNode, List
 from alc_aiidalab_widgets.viewers import ALC_AIIDA_VIEWER_MAPPING
 from IPython.display import clear_output, display
 from traitlets import Instance, observe
@@ -125,3 +125,33 @@ class VibrationalModesViewWidget(ipw.VBox):
         self.children = [ipw.HTML(html)]
 
         return
+class FittedChargesViewWidget(ipw.VBox):
+    """Custom widget to display fitted charges produced from ChemShell."""
+
+    def __init__(self, chargelist : List, **kwargs):
+        """FittedChargesViewWidget Constructor.
+
+        Parameters
+        ----------
+        chargelist : List
+            The AiiDA List object to display.
+        """
+        super().__init__(**kwargs)
+        self.chargelist = chargelist
+        values = self.chargelist.get_list()
+        # Construct HTML Table
+        html = "<table style='width:100%; border: 1px solid #ddd; text-align: left; "
+        html += "border-collapse: collapse;'>"
+        html += "<tr style='background-color: #2196F3; color: white;'>"
+        html += "<th>AtomName</th><th>Charge</th>"
+
+        for line in values:
+            bg_color = "#f9f9f9" if idx % 2 == 0 else "#ffffff"
+            html += f"<tr style='background-color: {bg_color};'>"
+            html += f"<td><b>{line[0]}</b></td><td>{line[1]:.6f}</td>"
+        html += "</table>"
+
+        self.children = [ipw.HTML(html)]
+
+        return
+

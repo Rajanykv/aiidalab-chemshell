@@ -49,7 +49,7 @@ def get_chem_shell_params(key: str) -> tuple:
     key :   str
         The input field to be queried ("sp": "Single Point", "op":
         "Geometry Optimisation", "qm": "Quantum Mechanics", "mm":
-        "Molecular Mechanics")
+        "Molecular Mechanics", "esp": "Charge Fitting")
 
     Returns
     -------
@@ -70,6 +70,8 @@ def get_chem_shell_params(key: str) -> tuple:
             return ChemShellCalculation.get_valid_QM_parameters().keys()
         if key == "mm":
             return ChemShellCalculation.get_valid_MM_parameters().keys()
+        if key == "esp":
+            return ChemShellCalculation.get_valid_esp_parameters().keys()
     return []
 
 

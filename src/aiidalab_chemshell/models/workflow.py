@@ -8,6 +8,7 @@ from traitlets import (
     Instance,
     Unicode,
     UseEnum,
+    Int, Float,
 )
 
 from aiidalab_chemshell.common.chemshell import BasisSetOptions, WorkflowOptions
@@ -35,5 +36,12 @@ class ChemShellWorkflowModel(HasTraits):
     hessian = Bool(False)
 
     structure_2 = StructureInputModel()
+
+    chargefit_method = Unicode("resp", allow_none=False)
+    chargefit_npoints = Int(50, allow_none=False)
+    chargefit_type = Unicode("shell", allow_none=False)
+    chargefit_vdw_scale = Float(1.5, allow_none=True)
+    chargefit_nlayers = Int(1, allow_none=True)
+    chargefit_tolerance = Float(1e-12, allow_none=False)
 
     default_guide = ""

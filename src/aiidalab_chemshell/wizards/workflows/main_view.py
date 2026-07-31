@@ -11,6 +11,7 @@ from aiidalab_chemshell.wizards.workflows.geometry_optimisation import (
 from aiidalab_chemshell.wizards.workflows.isolated_atoms import IsolatedAtomEnergyWidget
 from aiidalab_chemshell.wizards.workflows.neb import NEBOptionsWidget
 from aiidalab_chemshell.wizards.workflows.single_point import SinglePointCalcWidget
+from aiidalab_chemshell.wizards.workflows.chargefitting import ChargeFittingWidget
 
 
 class WorkflowWizardStep(ipw.VBox, awb.WizardAppWidgetStep):
@@ -107,8 +108,13 @@ class WorkflowWizardStep(ipw.VBox, awb.WizardAppWidgetStep):
             self.workflow_tabs.children[0].disable(True)
         else:
             self.workflow_tabs.children[self.workflow_tabs.selected_index].disable()
+
         self.submit_btn.description = "Submitted"
+        if self.workflow_tabs.selected_index == WorkflowOptions.CHARGE_FITTING:
+            self.submit_btn.description = "Charge Fitting Submitted"
+
         self.submit_btn.disabled = True
+
         return
 
     def _generate_workflow_widgets(self, workflow: WorkflowOptions) -> ipw.VBox:
@@ -121,6 +127,8 @@ class WorkflowWizardStep(ipw.VBox, awb.WizardAppWidgetStep):
                 return SinglePointCalcWidget(self.model)
             case WorkflowOptions.NEB:
                 return NEBOptionsWidget(self.model)
+            case WorkflowOptions.CHARGE_FITTING:
+                return ChargeFittingWidget(self.model)
             case _:
                 return ipw.VBox()
 

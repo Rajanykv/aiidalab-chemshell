@@ -1,6 +1,6 @@
 """Module containing common settings for configuring ChemShell."""
 
-from enum import Enum, auto
+from enum import Enum, auto, IntEnum
 
 
 class BasisSetOptions(Enum):
@@ -24,13 +24,14 @@ class BasisSetOptions(Enum):
                 return ""
 
 
-class WorkflowOptions(Enum):
+class WorkflowOptions(IntEnum):
     """Enum defining the available ChemShell based AiiDA workflows."""
 
     GEOMETRY = 0
     SINGLE_POINT = auto()
     ATOMIC_ENERGIES = auto()
     NEB = auto()
+    CHARGE_FITTING = auto()
 
     @property
     def label(self) -> str:
@@ -44,6 +45,8 @@ class WorkflowOptions(Enum):
                 return "Isolated Atomic Energies"
             case WorkflowOptions.NEB:
                 return "Nudged Elastic Band"
+            case WorkflowOptions.CHARGE_FITTING:
+                return "ESP/RESP Charge Fitting"
             case _:
                 return ""
 
@@ -59,5 +62,7 @@ class WorkflowOptions(Enum):
                 return "Atomic Energies"
             case WorkflowOptions.NEB:
                 return "NEB"
+            case WorkflowOptions.CHARGE_FITTING:
+                return "Charge Fit"
             case _:
                 return "ChemShell"

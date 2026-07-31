@@ -149,6 +149,8 @@ class ChemShellProcess:
                     self._submit_optimisation_workflow()
                 case WorkflowOptions.ATOMIC_ENERGIES:
                     self._submit_atomic_energies_workflow()
+                case WorkflowOptions.CHARGE_FITTING:
+                    self._submit_charge_fitting_workflow()
                 case _:
                     self._submit_core_calcjob()
         return
@@ -354,6 +356,47 @@ class ChemShellProcess:
         # currently be plumbed through; sub-calculations use the
         # ChemShellCalculation default resources.
 
+        self.node = submit(builder)
+        self.node.label = self.model.resource_model.process_label
+        self.node.description = self.model.resource_model.process_description
+        return
+
+    def _submit_charge_fitting_workflow(self) -> None:
+        """Submit the Charge Fitting WorkChain."""
+        builder = WorkflowFactory("chemshell.solvation").get_builder()  # pyright: ignore[reportFunctionMemberAccess]
+        builder.chemsh.code = load_code(self.model.resource_model.code_label)
+        if self.model.structure_model.has_file:
+            builder.chemsh.structure = self.model.structure_model.structure_file
+        else:
+            builder.chemsh.structure = self.model.structure_model.structure
+        builder.chemsh.qm_parameters = Dict(
+            {
+                "theory": self.model.workflow_model.qm_theory.name,
+                "method": "dft" if self.model.workflow_model.use_dft else "hf",
+                "functional": self.model.workflow_model.functional,
+                "basis": self.model.workflow_model.basis_set,
+            }
+        )
+
+        builder.chemsh.metadata.options.resources = {
+            "num_mpiprocs_per_machine": self.model.resource_model.ncpus,
+            "num_cores_per_machine": self.model.resource_model.ncpus,
+            "num_machines": 1,
+            "tot_num_mpiprocs": self.model.resource_model.ncpus,
+        }
+        builder.chemsh.chargefitting_parameters = {
+            'method':'resp',
+            'npoints': 50,
+            'type':'shell',
+            'vdw_scale':1.5,
+            'nlayers':1,
+            'tolerance':1e-12
+            }
+             # Only set ``withmpi`` when the code itself does not declare it.
+        if builder.chemsh.code.with_mpi is None:
+            builder.chemsh.metadata.options.withmpi = (
+                self.model.resource_model.ncpus > 1
+            )
         self.node = submit(builder)
         self.node.label = self.model.resource_model.process_label
         self.node.description = self.model.resource_model.process_description
