@@ -72,13 +72,28 @@ class StructureSelectionWidget(ipw.VBox, HasTraits):
     def _on_file_upload(self, change: dict) -> None:
         """When file upload button is pressed."""
         if change["new"] != change["old"]:
-            self.viewer = StructureViewWidget(self.file_uploader.file)  # type: ignore
+            #rajany
+            #self.viewer = StructureViewWidget(self.file_uploader.file)  # type: ignore
+            file_to_view = self._convert_fileformat(self.file_uploader.file)
+            self.viewer = StructureViewWidget(file_to_view)
             # self.viewer.assign_structure_from_file(
             #     self.file_uploader.file.filename,
             #     self.file_uploader.file.content,
             # )
             self._update_children()
         return
+    def _convert_fileformat(self, file:SinglefileData) -> SinglefileData:
+        if file.filename.lower().endswith(".pqr"):
+            from ase.io import read, write
+            from pathlib import Path
+            with file.open() as handle:
+                contents = read(handle, format="proteindatabank")
+                xyzfile = write("structurepqr.xyz", contents, format="xyz")
+                newfile = SinglefileData(file=str(Path("structurepqr.xyz").resolve()))
+            return newfile
+
+        else:
+            return file
 
     def _on_smiles_generation(self, change: dict) -> None:
         """When SMILES string is inputted."""
