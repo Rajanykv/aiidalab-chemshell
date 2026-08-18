@@ -363,7 +363,7 @@ class ChemShellProcess:
 
     def _submit_charge_fitting_workflow(self) -> None:
         """Submit the Charge Fitting WorkChain."""
-        builder = WorkflowFactory("chemshell.solvation").get_builder()  # pyright: ignore[reportFunctionMemberAccess]
+        builder = WorkflowFactory("chemshell.chargefit").get_builder()  # pyright: ignore[reportFunctionMemberAccess]
         builder.chemsh.code = load_code(self.model.resource_model.code_label)
         if self.model.structure_model.has_file:
             builder.chemsh.structure = self.model.structure_model.structure_file
