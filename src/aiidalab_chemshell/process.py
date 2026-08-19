@@ -152,6 +152,8 @@ class ChemShellProcess:
                     self._submit_atomic_energies_workflow()
                 case WorkflowOptions.CHARGE_FITTING:
                     self._submit_charge_fitting_workflow()
+                case WorkflowOptions.SOLVATION:
+                    self._submit_charge_fitting_workflow()
                 case _:
                     self._submit_core_calcjob()
         return

@@ -135,7 +135,8 @@ class WorkflowWizardStep(ipw.VBox, awb.WizardAppWidgetStep):
             case WorkflowOptions.CHARGE_FITTING:
                 return ChargeFittingWidget(self.model)
             case WorkflowOptions.SOLVATION:
-                self.model = SolvationWorkflowModel()
+                #rajany diag
+                #self.model = SolvationWorkflowModel()
                 return SolvationWidget(self.model)
             case _:
                 return ipw.VBox()
@@ -144,9 +145,12 @@ class WorkflowWizardStep(ipw.VBox, awb.WizardAppWidgetStep):
         self.model.workflow = WorkflowOptions(self.workflow_tabs.selected_index)
         self.workflow_tabs.children[self.workflow_tabs.selected_index].render()
         return
+
+
 class BatchWorkflowWizardStep(ipw.VBox, awb.WizardAppWidgetStep):
     """
     Wizard step for configuring the single point energy options for a batch.
+
     Reuses the standard :class:`SinglePointCalcWidget` (the same widget used on
     the main calculation page) so that every item in the batch is run with an
     identical single point energy configuration.
