@@ -9,6 +9,7 @@ from aiida.plugins import WorkflowFactory
 from aiidalab_chemshell.common.chemshell import WorkflowOptions
 from aiidalab_chemshell.models.structure import StructureInputModel
 from aiidalab_chemshell.models.workflow import ChemShellWorkflowModel
+from aiidalab_chemshell.models.workflow import SolvationWorkflowModel
 from aiidalab_chemshell.wizards.resources import ComputationalResourcesModel
 from aiidalab_chemshell.wizards.results import ResultsModel
 
@@ -385,12 +386,12 @@ class ChemShellProcess:
             "tot_num_mpiprocs": self.model.resource_model.ncpus,
         }
         builder.chemsh.chargefitting_parameters = {
-            'method':'resp',
-            'npoints': 50,
-            'type':'shell',
-            'vdw_scale':1.5,
-            'nlayers':1,
-            'tolerance':1e-12
+            'method':self.model.workflow_model.chargefit_method,
+            'npoints':self.model.workflow_model.chargefit_npoints,
+            'type':self.model.workflow_model.chargefit_type,
+            'vdw_scale':self.model.workflow_model.chargefit_vdw_scale,
+            'nlayers':self.model.workflow_model.chargefit_nlayers,
+            'tolerance':self.model.workflow_model.chargefit_tolerance,
             }
              # Only set ``withmpi`` when the code itself does not declare it.
         if builder.chemsh.code.with_mpi is None:

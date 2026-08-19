@@ -40,17 +40,29 @@ class ChargeFittingWidget(ipw.VBox):
 
     def render(self) -> None:
         """Render the widget."""
-        if self.rendered:
-            return
+        #if self.rendered:
+        #    return
         self.rendered = True
 
-        self.advanced_options = ipw.Checkbox(
-            value=False, description="Show Advanced QM Options", index=True
+        shared_layout = ipw.Layout(width='50%', margin='5px')
+        shared_layout2 = ipw.Layout(width='500px', margin='5px')
+        shared_style = {'description_width': '50%'}
+        shared_style2 = {'description_width': '100px'}
+
+        self.advanced_qm_options = ipw.Checkbox(
+            value=False, description="Show Advanced QM Options",
+            layout = shared_layout2,
+            style = shared_style2,
+            index=True,
         )
-        self.advanced_options.observe(self._render_input_options, "value")
+        self.advanced_qm_options.observe(self._render_input_options, "value")
 
         self.advanced_esp_options = ipw.Checkbox(
-            value=False, description="Show Advanced ChargeFit Options", index=True
+            value=False,
+            description="Show Advanced ChargeFit Options",
+            layout = shared_layout2,
+            style = shared_style2,
+            index=True,
         )
         self.advanced_esp_options.observe(self._render_input_options, "value")
 
@@ -58,7 +70,8 @@ class ChargeFittingWidget(ipw.VBox):
             options={e.name: e for e in BasisSetOptions},
             description="Basis Quality:",
             disabled=False,
-            layout={"width": "50%"},
+            layout=shared_layout,
+            style=shared_style,
         )
         self.basis_dropdown.observe(self._update_basis_set, "value")
         self.basis_dropdown.index = 1
@@ -67,14 +80,16 @@ class ChargeFittingWidget(ipw.VBox):
             options={"DFT" : True, "HF" : False},
             description="SCF method:",
             disabled=False,
-            layout={"width": "50%"},
+            layout=shared_layout,
+            style=shared_style,
         )
         link((self.model, "use_dft"), (self.qm_method_dropdown, "value"))
         self.basis_string = ipw.Text(
             value="",
             description="Basis Set:",
             disabled=False,
-            layout={"width": "50%"},
+            layout=shared_layout,
+            style=shared_style,
         )
         link((self.model, "basis_set"), (self.basis_string, "value"))
 
@@ -82,7 +97,8 @@ class ChargeFittingWidget(ipw.VBox):
             options={e.name: e for e in ChemShellQMTheory},
             description="QM Backend:",
             disabled=False,
-            layout={"width": "50%"},
+            layout=shared_layout,
+            style=shared_style,
         )
         link((self.model, "qm_theory"), (self.backend, "value"))
 
@@ -90,44 +106,19 @@ class ChargeFittingWidget(ipw.VBox):
             value="B3LYP",
             description="Functional:",
             disabled=False,
-            layout={"width": "50%"},
+            layout=shared_layout,
+            style=shared_style,
         )
         link((self.model, "functional"), (self.functional, "value"))
         self.qm_container = ipw.VBox([self.backend, self.qm_method_dropdown, self.basis_string, self.functional])
-
-        self.enable_mm_chk = ipw.Checkbox(
-            value=False, description="Use QM/MM", indent=True
-        )
-        self.enable_mm_chk.observe(self._enable_mm_options, "value")
-        ipw.dlink((self.enable_mm_chk, "value"), (self.model, "use_mm"))
-
-        # MM Backend
-        # self.mm_theory_dropdown = ipw.Dropdown(
-        #     options=self._get_mm_theory_options(),
-        #     description="MM Theory:",
-        #     disabled=True,
-        #     layout={"width": "50%"},
-        # )
-
-        # QM region for QM/MM calculation
-        self.qm_region_text = ipw.Text(
-            value="",
-            description="QM Region:",
-            disabled=False,
-            layout={"width": "50%"},
-        )
-        link((self.qm_region_text, "value"), (self.model, "qm_region"))
-
-        # Force Field File
-        self.ff_file = FileUploadWidget(description="Force Field:")
-        link((self.ff_file, "file"), (self.model, "force_field"))
 
         self.esp_method_dropdown = ipw.Dropdown(
             options=["resp", "esp"],
             value="resp",
             description="ESP Method:",
             disabled=False,
-            layout={"width": "50%"},
+            layout=shared_layout,
+            style=shared_style,
         )
         link((self.model, "chargefit_method"), (self.esp_method_dropdown, "value"))
 
@@ -135,7 +126,8 @@ class ChargeFittingWidget(ipw.VBox):
             value=50,
             description="Npoints",
             disabled=False,
-            layout={"width": "50%"},
+            layout=shared_layout,
+            style=shared_style,
         )
         link((self.model, "chargefit_npoints"), (self.chargefit_npoints, "value"))
 
@@ -143,7 +135,8 @@ class ChargeFittingWidget(ipw.VBox):
             value="shell",
             description="Type",
             disabled=False,
-            layout={"width": "50%"},
+            layout=shared_layout,
+            style=shared_style,
         )
         link((self.model, "chargefit_type"), (self.chargefit_type, "value"))
 
@@ -151,7 +144,8 @@ class ChargeFittingWidget(ipw.VBox):
             value=1e-12,
             description="Tolerance",
             disabled=False,
-            layout={"width": "50%"},
+            layout=shared_layout,
+            style=shared_style,
         )
         link((self.model, "chargefit_tolerance"), (self.chargefit_tolerance, "value"))
 
@@ -159,7 +153,8 @@ class ChargeFittingWidget(ipw.VBox):
             value=1.5,
             description="VdW scale",
             disabled=False,
-            layout={"width": "50%"},
+            layout=shared_layout,
+            style=shared_style,
         )
         link((self.model, "chargefit_vdw_scale"), (self.chargefit_vdw_scale, "value"))
 
@@ -167,10 +162,11 @@ class ChargeFittingWidget(ipw.VBox):
             value=1,
             description="Nlayers",
             disabled=False,
-            layout={"width": "50%"},
+            layout=shared_layout,
+            style=shared_style,
         )
         link((self.model, "chargefit_nlayers"), (self.chargefit_nlayers, "value"))
-        self.esp_container = ipw.VBox([self.esp_method_dropdown, self.chargefit_npoints, self.chargefit_type, self.chargefit_tolerance, self.chargefit_vdw_scale, self.chargefit_nlayers])
+        self.esp_container = ipw.VBox([self.chargefit_npoints, self.chargefit_type, self.chargefit_tolerance, self.chargefit_vdw_scale, self.chargefit_nlayers])
 
         self._render_basic_options()
 
@@ -178,30 +174,11 @@ class ChargeFittingWidget(ipw.VBox):
         """Render the simplified input options view."""
         children = [
             self.header,
-            self.advanced_options,
+            self.advanced_qm_options,
             self.basis_dropdown,
             self.advanced_esp_options,
             self.esp_method_dropdown,
-            self.enable_mm_chk,
         ]
-        if self.enable_mm_chk.value:
-            children.append(self.qm_region_text)
-            children.append(self.ff_file)
-        self.children = children
-        return
-
-    def _render_advanced_options(self) -> None:
-        """Render the advanced input options view."""
-        children = [self.header, self.advanced_options]
-        if self.advanced_options.value:
-            children.append(self.qm_container)
-        children.append(self.advanced_esp_options)
-        if self.advanced_esp_options.value:
-            children.append(self.esp_container)
-        children.append(self.enable_mm_chk)
-        if self.enable_mm_chk.value:
-            children.append(self.qm_region_text)
-            children.append(self.ff_file)
         self.children = children
         return
 
@@ -215,14 +192,16 @@ class ChargeFittingWidget(ipw.VBox):
             self._update_basis_set({"new": self.basis_dropdown.value, "old": None})
         return
 
-    def _render_input_charge_options(self, change: dict) -> None:
-        """Switch between basic and advanced views."""
-        if change["new"]:
-            self._render_advanced_esp_options()
-        else:
-            self._render_basic_options()
-            # Update the linked basis set value
-            self._update_basis_set({"new": self.basis_dropdown.value, "old": None})
+    def _render_advanced_options(self) -> None:
+        """Render the advanced input options view."""
+        children = [self.header, self.advanced_qm_options]
+        if self.advanced_qm_options.value:
+            children.append(self.qm_container)
+        children.append(self.advanced_esp_options)
+        children.append(self.esp_method_dropdown)
+        if self.advanced_esp_options.value:
+            children.append(self.esp_container)
+        self.children = children
         return
 
     def _update_basis_set(self, change: dict) -> None:
@@ -236,10 +215,6 @@ class ChargeFittingWidget(ipw.VBox):
         """Disable/Enable the wigets input options."""
         for child in self.children:
             child.disabled = disable
-        return
-
-    def _enable_mm_options(self, _) -> None:
-        self._render_input_options({"new": self.advanced_options.value})
         return
 
 #    def disable(self, change: dict) -> None:
