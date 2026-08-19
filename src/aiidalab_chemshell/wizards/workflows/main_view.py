@@ -5,6 +5,7 @@ import ipywidgets as ipw
 
 from aiidalab_chemshell.common.chemshell import WorkflowOptions
 from aiidalab_chemshell.models.workflow import ChemShellWorkflowModel
+from aiidalab_chemshell.models.workflow import SolvationWorkflowModel
 from aiidalab_chemshell.wizards.workflows.geometry_optimisation import (
     ChemShellOptionsWidget,
 )
@@ -12,6 +13,7 @@ from aiidalab_chemshell.wizards.workflows.isolated_atoms import IsolatedAtomEner
 from aiidalab_chemshell.wizards.workflows.neb import NEBOptionsWidget
 from aiidalab_chemshell.wizards.workflows.single_point import SinglePointCalcWidget
 from aiidalab_chemshell.wizards.workflows.chargefitting import ChargeFittingWidget
+from aiidalab_chemshell.wizards.workflows.solvation import SolvationWidget
 
 
 class WorkflowWizardStep(ipw.VBox, awb.WizardAppWidgetStep):
@@ -110,8 +112,11 @@ class WorkflowWizardStep(ipw.VBox, awb.WizardAppWidgetStep):
             self.workflow_tabs.children[self.workflow_tabs.selected_index].disable()
 
         self.submit_btn.description = "Submitted"
-        if self.workflow_tabs.selected_index == WorkflowOptions.CHARGE_FITTING:
+        #if self.workflow_tabs.selected_index == WorkflowOptions.CHARGE_FITTING:
+        if self.model.workflow == WorkflowOptions.CHARGE_FITTING:
             self.submit_btn.description = "Charge Fitting Submitted"
+        if self.workflow_tabs.selected_index == WorkflowOptions.SOLVATION:
+            self.submit_btn.description = "Solvation Submitted"
 
         self.submit_btn.disabled = True
 
@@ -129,6 +134,9 @@ class WorkflowWizardStep(ipw.VBox, awb.WizardAppWidgetStep):
                 return NEBOptionsWidget(self.model)
             case WorkflowOptions.CHARGE_FITTING:
                 return ChargeFittingWidget(self.model)
+            case WorkflowOptions.SOLVATION:
+                self.model = SolvationWorkflowModel()
+                return SolvationWidget(self.model)
             case _:
                 return ipw.VBox()
 
@@ -136,12 +144,9 @@ class WorkflowWizardStep(ipw.VBox, awb.WizardAppWidgetStep):
         self.model.workflow = WorkflowOptions(self.workflow_tabs.selected_index)
         self.workflow_tabs.children[self.workflow_tabs.selected_index].render()
         return
-
-
 class BatchWorkflowWizardStep(ipw.VBox, awb.WizardAppWidgetStep):
     """
     Wizard step for configuring the single point energy options for a batch.
-
     Reuses the standard :class:`SinglePointCalcWidget` (the same widget used on
     the main calculation page) so that every item in the batch is run with an
     identical single point energy configuration.
