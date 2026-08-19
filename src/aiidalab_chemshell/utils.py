@@ -49,7 +49,8 @@ def get_chem_shell_params(key: str) -> tuple:
     key :   str
         The input field to be queried ("sp": "Single Point", "op":
         "Geometry Optimisation", "qm": "Quantum Mechanics", "mm":
-        "Molecular Mechanics", "esp": "Charge Fitting")
+        "Molecular Mechanics",
+        "esp": "Charge Fitting")
 
     Returns
     -------

@@ -13,6 +13,7 @@ from traitlets import (
 
 from aiidalab_chemshell.common.chemshell import BasisSetOptions, WorkflowOptions
 from aiidalab_chemshell.models.structure import StructureInputModel
+from aiidalab_chemshell.common.chemshell import SolventBoxOptions
 
 
 class ChemShellWorkflowModel(HasTraits):
@@ -45,3 +46,17 @@ class ChemShellWorkflowModel(HasTraits):
     chargefit_tolerance = Float(1e-12, allow_none=False)
 
     default_guide = ""
+
+class SolvationWorkflowModel(ChemShellWorkflowModel):
+    """The model for setting up a Solvation workflow."""
+
+    from pathlib import Path
+    workflow = UseEnum(WorkflowOptions, WorkflowOptions.SOLVATION, allow_none=True)
+    submitted = Bool(False).tag(sync=True)
+
+    solvent_box = Instance(SinglefileData, default=SinglefileData(file=SolventBoxOptions.WATER30.value), allow_none=False)
+
+    @property
+    def has_file(self) -> bool:
+        """True if a raw structure file object has been attached to the model."""
+        return self.solvent_box is not None
