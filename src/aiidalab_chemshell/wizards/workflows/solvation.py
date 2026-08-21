@@ -13,12 +13,12 @@ from aiida.orm import SinglefileData
 from aiidalab_chemshell.common.chemshell import BasisSetOptions
 from aiidalab_chemshell.common.chemshell import SolventBoxOptions
 from aiidalab_chemshell.common.utils import LoadingWidget
-from aiidalab_chemshell.models.workflow import ChemshellWorkflowModel
+from aiidalab_chemshell.models.workflow import ChemShellWorkflowModel
 
 class SolvationWidget(ipw.VBox):
     """Widget for ChemShell Solvation workflow inputs."""
 
-    def __init__(self, model: ChemshellWorkflowModel, **kwargs):
+    def __init__(self, model: ChemShellWorkflowModel, **kwargs):
         """
         SolvationWidget constructor.
 
