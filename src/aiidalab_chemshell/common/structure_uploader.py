@@ -83,7 +83,7 @@ class StructureSelectionWidget(ipw.VBox, HasTraits):
             self._update_children()
         return
     def _convert_fileformat(self, file:SinglefileData) -> SinglefileData:
-        if file.filename.lower().endswith(".pqr"):
+        if file.filename.lower().endswith(".pqr") or file.filename.lower().endswith(".pdb"):
             from ase.io import read, write
             from pathlib import Path
             with file.open() as handle:

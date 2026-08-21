@@ -298,7 +298,7 @@ class SolvationWidget(ipw.VBox):
         return
 
     def _convert_fileformat(self, file:SinglefileData) -> SinglefileData:
-        if file.filename.lower().endswith(".pqr"):
+        if file.filename.lower().endswith(".pqr") or file.filename.lower().endswith(".pdb"):
             from ase.io import read, write
             from pathlib import Path
             with file.open() as handle:
