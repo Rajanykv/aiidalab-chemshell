@@ -5,7 +5,6 @@ import ipywidgets as ipw
 
 from aiidalab_chemshell.common.chemshell import WorkflowOptions
 from aiidalab_chemshell.models.workflow import ChemShellWorkflowModel
-from aiidalab_chemshell.models.workflow import SolvationWorkflowModel
 from aiidalab_chemshell.wizards.workflows.geometry_optimisation import (
     ChemShellOptionsWidget,
 )
@@ -135,8 +134,6 @@ class WorkflowWizardStep(ipw.VBox, awb.WizardAppWidgetStep):
             case WorkflowOptions.CHARGE_FITTING:
                 return ChargeFittingWidget(self.model)
             case WorkflowOptions.SOLVATION:
-                #rajany diag
-                #self.model = SolvationWorkflowModel()
                 return SolvationWidget(self.model)
             case _:
                 return ipw.VBox()
