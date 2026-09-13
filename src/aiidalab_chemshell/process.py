@@ -411,12 +411,12 @@ class ChemShellProcess:
     def _submit_solvation_workflow(self) -> None:
         """Submit the Solvation WorkChain."""
         builder = WorkflowFactory("chemshell.solvation").get_builder()  # pyright: ignore[reportFunctionMemberAccess]
-        builder.chemsh.code = load_code(self.model.resource_model.code_label)
+        builder.code = load_code(self.model.resource_model.code_label)
         if self.model.structure_model.has_file:
-            builder.chemsh.structure = self.model.structure_model.structure_file
+            builder.structure = self.model.structure_model.structure_file
         else:
-            builder.chemsh.structure = self.model.structure_model.structure
-        builder.chemsh.qm_parameters = Dict(
+            builder.structure = self.model.structure_model.structure
+        builder.qm_parameters = Dict(
             {
                 "theory": self.model.workflow_model.qm_theory.name,
                 "method": "dft" if self.model.workflow_model.use_dft else "hf",
@@ -431,19 +431,39 @@ class ChemShellProcess:
             "num_machines": 1,
             "tot_num_mpiprocs": self.model.resource_model.ncpus,
         }
-        builder.chemsh.chargefitting_parameters = {
+
+        builder.chargefitting_parameters = Dict({
             'method':self.model.workflow_model.chargefit_method,
             'npoints':self.model.workflow_model.chargefit_npoints,
             'type':self.model.workflow_model.chargefit_type,
             'vdw_scale':self.model.workflow_model.chargefit_vdw_scale,
             'nlayers':self.model.workflow_model.chargefit_nlayers,
             'tolerance':self.model.workflow_model.chargefit_tolerance,
-            }
-        # Only set ``withmpi`` when the code itself does not declare it.
-        if builder.chemsh.code.with_mpi is None:
+       })
+        if builder.code.with_mpi is None:
             builder.chemsh.metadata.options.withmpi = (
                 self.model.resource_model.ncpus > 1
             )
+        builder.mm_parameters = Dict({
+                    "theory": self.model.workflow_model.mm_theory,
+                    "temperature" : self.model.workflow_model.md_temperature,
+                    "rcut" : self.model.workflow_model.md_rcut
+        })
+        builder.force_field_file = self.model.workflow_model.force_field
+
+        builder.md_parameters = Dict({
+            "length_npt" : self.model.workflow_model.md_length_npt,
+            "length_nvt" : self.model.workflow_model.md_length_nvt,
+            "length_production" : self.model.workflow_model.md_length_production,
+	    "max_ncycles" : self.model.workflow_model.md_max_ncycles,
+            'minimisation_npt' :self.model.workflow_model.md_minimisation_npt,
+            'minimisation_nvt' : self.model.workflow_model.md_minimisation_nvt,
+            'solutes_dist' : self.model.workflow_model.md_solutes_dist,
+            'padding' : self.model.workflow_model.md_padding,
+            'nsnapshots' : self.model.workflow_model.md_nsnapshots,
+            "fixed_npt" : self.model.workflow_model.md_fixed_npt,
+        })
+        builder.dryrunmd = self.model.workflow_model.md_dryrunmd
         self.node = submit(builder)
         self.node.label = self.model.resource_model.process_label
         self.node.description = self.model.resource_model.process_description

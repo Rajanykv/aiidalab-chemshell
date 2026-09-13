@@ -49,6 +49,20 @@ class ChemShellWorkflowModel(HasTraits):
 
     solvent_box = Instance(SinglefileData, default=SinglefileData(file=SolventBoxOptions.WATER30.value), allow_none=False)
 
+    md_temperature = Float(300.0, allow_none=True)
+    md_rcut = Float(20.0, allow_none=True)
+    md_length_npt = Int(50, allow_none=False)
+    md_length_nvt = Int(20, allow_none=False)
+    md_length_production = Int(20, allow_none=False)
+    md_max_ncycles = Int(20, allow_none=False)
+    md_minimisation_npt = Int(5, allow_none=False)
+    md_minimisation_nvt = Int(5, allow_none=False)
+    md_solutes_dist = Float(3.0, allow_none=False)
+    md_padding = Float(50.0, allow_none=False)
+    md_nsnapshots = Int(10, allow_none=False)
+    md_fixed_npt  = Unicode("", allow_none=False)
+    md_dryrunmd = Bool(False, allow_none=True)
+
     @property
     def has_box(self) -> bool:
         """True if a raw structure file object has been attached to the model."""
