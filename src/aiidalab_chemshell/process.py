@@ -444,12 +444,16 @@ class ChemShellProcess:
             builder.chemsh.metadata.options.withmpi = (
                 self.model.resource_model.ncpus > 1
             )
-        builder.mm_parameters = Dict({
+        mm_parameters = {
                     "theory": self.model.workflow_model.mm_theory,
                     "temperature" : self.model.workflow_model.md_temperature,
                     "rcut" : self.model.workflow_model.md_rcut
-        })
-        builder.force_field_file = self.model.workflow_model.force_field
+        }
+        if self.model.workflow_model.force_field:
+            builder.force_field_file = self.model.workflow_model.force_field
+        else:
+           mm_parameters.update({"ff" : "charmm"})
+        builder.mm_parameters = Dict(mm_parameters)
 
         builder.md_parameters = Dict({
             "length_npt" : self.model.workflow_model.md_length_npt,
