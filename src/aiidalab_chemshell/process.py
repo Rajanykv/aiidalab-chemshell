@@ -350,10 +350,15 @@ class ChemShellProcess:
             structure_file = self.model.structure_model.structure_file
             builder.structure_files = {"input_file": structure_file}
 
-        # NOTE: BatchProcessWorkChain does not expose the per-calculation
-        # ``metadata`` port, so the resource count from the resource step cannot
-        # currently be plumbed through; sub-calculations use the
-        # ChemShellCalculation default resources.
+        builder.calc.metadata.options.resources = {
+            "num_mpiprocs_per_machine": self.model.resource_model.ncpus,
+            "num_cores_per_machine": self.model.resource_model.ncpus,
+            "num_machines": 1,
+            "tot_num_mpiprocs": self.model.resource_model.ncpus,
+        }
+        # Only set ``withmpi`` when the code itself does not declare it.
+        if builder.code.with_mpi is None:
+            builder.calc.metadata.options.withmpi = self.model.resource_model.ncpus > 1
 
         self.node = submit(builder)
         self.node.label = self.model.resource_model.process_label
