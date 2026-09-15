@@ -467,6 +467,8 @@ class ChemShellProcess:
             'nsnapshots' : self.model.workflow_model.md_nsnapshots,
             "fixed_npt" : self.model.workflow_model.md_fixed_npt,
         })
+        builder.solvent_box =  self.model.workflow_model.solvent_box
+
         builder.dryrunmd = self.model.workflow_model.md_dryrunmd
         self.node = submit(builder)
         self.node.label = self.model.resource_model.process_label
