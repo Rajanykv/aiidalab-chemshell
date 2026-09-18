@@ -75,7 +75,9 @@ class StructureSelectionWidget(ipw.VBox, HasTraits):
             #rajany
             #self.viewer = StructureViewWidget(self.file_uploader.file)  # type: ignore
             file_to_view = self._convert_fileformat(self.file_uploader.file)
-            self.viewer = StructureViewWidget(file_to_view)
+            self.viewer = StructureViewWidget(file_to_view,
+                           layout={"margin": "auto"},
+            )
             # self.viewer.assign_structure_from_file(
             #     self.file_uploader.file.filename,
             #     self.file_uploader.file.content,
@@ -98,8 +100,11 @@ class StructureSelectionWidget(ipw.VBox, HasTraits):
     def _on_smiles_generation(self, change: dict) -> None:
         """When SMILES string is inputted."""
         if change["new"] != change["old"]:
-            self.structure = StructureData(ase=change["new"])
-            self.viewer = StructureViewWidget(self.structure)
+            self.structure_data = StructureData(ase=change["new"])
+            self.viewer = StructureViewWidget(
+                self.structure_data,
+                layout={"margin": "auto"},
+            )
             self._update_children()
             if self.structure_file:
                 self.structure_file = None
@@ -125,8 +130,11 @@ class StructureSelectionWidget(ipw.VBox, HasTraits):
         elif isinstance(change["new"], StructureData):
             if self.structure_file:
                 self.structure_file = None
-            self.structure = change["new"]
-        self.viewer = StructureViewWidget(change["new"])
+            self.structure_data = change["new"]
+        self.viewer = StructureViewWidget(
+            change["new"],
+            layout={"margin": "auto"},
+        )
         self._update_children()
         return
 
