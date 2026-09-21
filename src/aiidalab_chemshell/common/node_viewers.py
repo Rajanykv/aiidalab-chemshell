@@ -86,7 +86,9 @@ class CustomAiidaNodeViewWidget(ipw.VBox):
                     _viewer = ALC_AIIDA_VIEWER_MAPPING.get("xyz_table", _viewer)
                 elif link_name in ["energy", "final_energy"]:
                     return f"Final SCF Energy (Hartree): {node.value}"
-
+                elif link_name == "fitted_charges":
+                   _viewer = FittedChargesViewWidget
+                   #return f"Fitted Charges: {node.get_list()}"
         if _viewer:
             return _viewer(node, **kwargs)
         # No viewer registered for this type, return node itself
@@ -121,10 +123,9 @@ class VibrationalModesViewWidget(ipw.VBox):
             html += f"<td>{row[2]:.6f}</td><td>{row[3]:.6f}</td><td>{row[4]:.6f}</td>"
             html += "</tr>"
         html += "</table>"
-
         self.children = [ipw.HTML(html)]
-
         return
+
 class FittedChargesViewWidget(ipw.VBox):
     """Custom widget to display fitted charges produced from ChemShell."""
 
@@ -140,18 +141,17 @@ class FittedChargesViewWidget(ipw.VBox):
         self.chargelist = chargelist
         values = self.chargelist.get_list()
         # Construct HTML Table
-        html = "<table style='width:100%; border: 1px solid #ddd; text-align: left; "
+        html = f"<table style='width:60%; border: 1px solid #ddd; text-align: left; "
         html += "border-collapse: collapse;'>"
         html += "<tr style='background-color: #2196F3; color: white;'>"
         html += "<th>AtomName</th><th>Charge</th>"
+        html += "</tr>"
 
-        for line in values:
+        for idx, line in enumerate(values):
             bg_color = "#f9f9f9" if idx % 2 == 0 else "#ffffff"
             html += f"<tr style='background-color: {bg_color};'>"
-            html += f"<td><b>{line[0]}</b></td><td>{line[1]:.6f}</td>"
+            html += f"<td><b>{line[0]}</b></td><td>{float(line[1]):.6f}</td>"
+            html += "</tr>"
         html += "</table>"
-
         self.children = [ipw.HTML(html)]
-
         return
-
