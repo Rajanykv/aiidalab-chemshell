@@ -8,6 +8,7 @@ from aiida_chemshell.calculations.base import ChemShellCalculation
 from aiida_chemshell.workflows.batch_calculation import BatchProcessWorkChain
 from aiida_chemshell.workflows.isolated_atoms import IsolatedAtomicEnergiesWorkChain
 from aiida_chemshell.workflows.optimisation import GeometryOptimisationWorkChain
+from aiida_chemshell.workflows.solvation import SolvationWorkChain
 from alc_aiidalab_widgets.widgets import AiiDADatabaseQueryWidget
 from IPython.display import display
 
@@ -109,6 +110,7 @@ class HistoryAppView(ipw.VBox):
                 GeometryOptimisationWorkChain,
                 IsolatedAtomicEnergiesWorkChain,
                 BatchProcessWorkChain,
+                SolvationWorkChain,
             ],
         )
         self.lookup_widget.observe(self._update_node_view, "data_object")
