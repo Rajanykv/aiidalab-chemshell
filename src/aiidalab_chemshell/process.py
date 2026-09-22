@@ -445,7 +445,16 @@ class ChemShellProcess:
             'vdw_scale':self.model.workflow_model.chargefit_vdw_scale,
             'nlayers':self.model.workflow_model.chargefit_nlayers,
             'tolerance':self.model.workflow_model.chargefit_tolerance,
-       })
+        })
+        builder.esp_qm_parameters = Dict(
+            {
+                "theory": self.model.workflow_model.qm_theory.name,
+                "method": "dft" if self.model.workflow_model.esp_use_dft else "hf",
+                "functional": self.model.workflow_model.esp_functional,
+                "basis": self.model.workflow_model.esp_basis_set,
+            }
+        )
+
         if builder.code.with_mpi is None:
             builder.chemsh.metadata.options.withmpi = (
                 self.model.resource_model.ncpus > 1

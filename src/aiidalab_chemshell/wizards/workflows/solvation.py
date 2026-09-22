@@ -99,6 +99,14 @@ class SolvationWidget(ipw.VBox):
         )
         self.advanced_qm_options.observe(self._render_input_options, names="value")
 
+        self.esp_qm_options = ipw.Checkbox(
+            value=False, description="Show QM Option for (R)ESP",
+            layout = shared_layout2,
+            style = shared_style2,
+            index=True
+        )
+        self.esp_qm_options.observe(self._render_input_options, names="value")
+
         self.advanced_mm_options = ipw.Checkbox(
             value=False, description="Show Advanced MM Options",
             layout = shared_layout2,
@@ -173,6 +181,7 @@ class SolvationWidget(ipw.VBox):
             style=shared_style,
         )
         link((self.model, "use_dft"), (self.qm_method_dropdown, "value"))
+
         self.basis_string = ipw.Text(
             value="",
             description="Basis Set:",
@@ -199,7 +208,35 @@ class SolvationWidget(ipw.VBox):
             style=shared_style,
         )
         link((self.model, "functional"), (self.functional, "value"))
+
         self.qm_container = ipw.VBox([self.backend, self.qm_method_dropdown, self.basis_string, self.functional])
+
+        self.esp_basis_string = ipw.Text(
+            value="",
+            description="Basis Set:",
+            disabled=False,
+            layout=shared_layout,
+            style=shared_style,
+        )
+        link((self.model, "esp_basis_set"), (self.esp_basis_string, "value"))
+        self.esp_functional = ipw.Text(
+            value="B3LYP",
+            description="Functional:",
+            disabled=False,
+            layout=shared_layout,
+            style=shared_style,
+        )
+        link((self.model, "esp_functional"), (self.functional, "value"))
+        self.esp_qm_method_dropdown = ipw.Dropdown(
+            options={"DFT" : True, "HF" : False},
+            description="SCF method:",
+            disabled=False,
+            layout=shared_layout,
+            style=shared_style,
+        )
+        link((self.model, "esp_use_dft"), (self.esp_qm_method_dropdown, "value"))
+
+        self.esp_qm_container = ipw.VBox([self.esp_qm_method_dropdown, self.esp_basis_string, self.esp_functional])
 
         self.enable_mm_chk = ipw.Checkbox(
             value=False, description="Use QM/MM",
@@ -338,6 +375,7 @@ class SolvationWidget(ipw.VBox):
             self.esp_label,
             self.advanced_esp_options,
             self.esp_method_dropdown,
+            self.esp_qm_options,
             self.md_label,
             self.solventbox_dropdown,
             self.solventbox_view_select,
@@ -367,6 +405,10 @@ class SolvationWidget(ipw.VBox):
 
         if self.advanced_esp_options.value:
             children.append(self.esp_container)
+
+        children.append(self.esp_qm_options)
+        if self.esp_qm_options.value:
+            children.append(self.esp_qm_container)
 
         children.extend([
             self.md_label,
