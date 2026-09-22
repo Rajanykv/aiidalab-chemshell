@@ -35,8 +35,8 @@ class SolvationWidget(ipw.VBox):
         self.header = ipw.HTML(
             """
             <h3 style="text-align: center;">Solvation Workflow</h3>
-            <p>
-                Perform Solvation of a given solute in a solvation box of choice.
+            <p style="text-align: center;">
+              Perform Solvation of a given solute in a solvation box of choice.
             </p>
             """,
             # layout={"margin": "auto"},
@@ -57,6 +57,40 @@ class SolvationWidget(ipw.VBox):
         shared_style = {'description_width': '50%'}
         shared_style2 = {'description_width': '100px'}
 
+        #background-color: #007bff;
+        step_style ="""
+             width: 60%; height: 30px;
+             background-color: #2196F3;
+             color: white;
+             margin: auto;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             border-radius: 7px;
+             font-weight: bold;
+             text-align: center;
+             """
+        self.opt_label = ipw.HTML(
+            value=f"""
+            <div style="{step_style}">
+             Step 1: Optimise the Solute structure
+             </div>
+             """
+        )
+        self.esp_label = ipw.HTML(
+            value=f"""
+            <div style="{step_style}">
+             Step 2: Do Charge Fitting on the Optimised Structure
+             </div>
+             """
+        )
+        self.md_label = ipw.HTML(
+            value=f"""
+            <div style="{step_style}">
+             Step 2: Equillibrate in a Solvent of choice
+             </div>
+             """
+        )
         self.advanced_qm_options = ipw.Checkbox(
             value=False, description="Show Advanced QM Options",
             layout = shared_layout2,
@@ -298,10 +332,13 @@ class SolvationWidget(ipw.VBox):
         """Render the simplified input options view."""
         children = [
             self.header,
+            self.opt_label,
             self.advanced_qm_options,
             self.basis_dropdown,
+            self.esp_label,
             self.advanced_esp_options,
             self.esp_method_dropdown,
+            self.md_label,
             self.solventbox_dropdown,
             self.solventbox_view_select,
             self.viewer,
@@ -320,18 +357,19 @@ class SolvationWidget(ipw.VBox):
 
     def _render_advanced_options(self) -> None:
         """Render the advanced input options view."""
-        children = [self.header, self.advanced_qm_options]
+        children = [self.header, self.opt_label, self.advanced_qm_options]
 
         if self.advanced_qm_options.value:
             children.append(self.qm_container)
 
-        children.extend([self.advanced_esp_options,
+        children.extend([self.esp_label, self.advanced_esp_options,
                         self.esp_method_dropdown])
 
         if self.advanced_esp_options.value:
             children.append(self.esp_container)
 
         children.extend([
+            self.md_label,
             self.solventbox_dropdown,
             self.solventbox_view_select,
             self.viewer,
