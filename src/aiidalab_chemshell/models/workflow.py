@@ -64,7 +64,8 @@ class ChemShellWorkflowModel(HasTraits):
     md_solutes_dist = Float(3.0, allow_none=False)
     md_padding = Float(50.0, allow_none=False)
     md_nsnapshots = Int(10, allow_none=False)
-    md_fixed_npt  = Unicode("", allow_none=False)
+    md_fixed_npt  = Unicode("", allow_none=True)
+    md_fixed_nvt  = Unicode("", allow_none=True)
     md_dryrunmd = Bool(False, allow_none=True)
 
     @property

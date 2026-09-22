@@ -346,22 +346,108 @@ class SolvationWidget(ipw.VBox):
         )
         link((self.model, "md_temperature"), (self.temperature, "value"))
 
-#            "length_npt" : self.model.workflow_model.md_length_npt,
-#            "length_nvt" : self.model.workflow_model.md_length_nvt,
-#            "length_production" : self.model.workflow_model.md_length_production,
-#            "max_ncycles" : self.model.workflow_model.md_max_ncycles,
-#            'minimisation_npt' :self.model.workflow_model.md_minimisation_npt,
-#            'minimisation_nvt' : self.model.workflow_model.md_minimisation_nvt,
-#            'solutes_dist' : self.model.workflow_model.md_solutes_dist,
-#            'padding' : self.model.workflow_model.md_padding,
-#            'nsnapshots' : self.model.workflow_model.md_nsnapshots,
-#            "fixed_npt" : self.model.workflow_model.md_fixed_npt,
+        self.length_npt = ipw.IntText(
+            value=5,
+            description="N Steps for NPT",
+            disabled=False,
+            layout=shared_layout,
+            style=shared_style,
+        )
+        link((self.model, "md_length_npt"), (self.length_npt, "value"))
 
+        self.length_nvt = ipw.IntText(
+            value=5,
+            description="N Steps for NVT",
+            disabled=False,
+            layout=shared_layout,
+            style=shared_style,
+        )
+        link((self.model, "md_length_nvt"), (self.length_nvt, "value"))
 
+        self.length_tot_run = ipw.IntText(
+            value=100,
+            description="N Steps for Total Run",
+            disabled=False,
+            layout=shared_layout,
+            style=shared_style,
+        )
+        link((self.model, "md_length_production"), (self.length_tot_run, "value"))
+
+        self.length_ncycles = ipw.IntText(
+            value=10,
+            description="Maximum Cycles",
+            disabled=False,
+            layout=shared_layout,
+            style=shared_style,
+        )
+        link((self.model, "md_max_ncycles"), (self.length_ncycles, "value"))
+
+        self.n_minimise_npt = ipw.IntText(
+            value=10,
+            description="N Steps NPT minimisation",
+            disabled=False,
+            layout=shared_layout,
+            style=shared_style,
+        )
+        link((self.model, "md_minimisation_npt"), (self.n_minimise_npt, "value"))
+
+        self.n_minimise_nvt = ipw.IntText(
+            value=10,
+            description="N Steps NVT minimisation",
+            disabled=False,
+            layout=shared_layout,
+            style=shared_style,
+        )
+        link((self.model, "md_minimisation_nvt"), (self.n_minimise_nvt, "value"))
+
+        self.n_snapshots = ipw.IntText(
+            value=10,
+            description="Num of Snapshots",
+            disabled=False,
+            layout=shared_layout,
+            style=shared_style,
+        )
+        link((self.model, "md_nsnapshots"), (self.n_snapshots, "value"))
+
+        self.solutes_dist = ipw.FloatText(
+            value=20.0,
+            description="Solutes distance",
+            disabled=False,
+            layout=shared_layout,
+            style=shared_style,
+        )
+        link((self.model, "md_solutes_dist"), (self.solutes_dist, "value"))
+
+        self.padding = ipw.FloatText(
+            value=20.0,
+            description="Padding",
+            disabled=False,
+            layout=shared_layout,
+            style=shared_style,
+        )
+        link((self.model, "md_padding"), (self.padding, "value"))
+
+        self.fixed_npt= ipw.Text(
+            value='',
+            description="Atoms fixed for NPT",
+            disabled=False,
+            layout=shared_layout,
+            style=shared_style,
+        )
+        link((self.model, "md_fixed_npt"), (self.fixed_npt, "value"))
+
+        self.fixed_nvt= ipw.Text(
+            value='',
+            description="Atoms fixed for NVT",
+            disabled=False,
+            layout=shared_layout,
+            style=shared_style,
+        )
+        link((self.model, "md_fixed_nvt"), (self.fixed_nvt, "value"))
 
         self.esp_container = ipw.VBox([self.chargefit_npoints, self.chargefit_type, self.chargefit_tolerance, self.chargefit_vdw_scale, self.chargefit_nlayers])
 
-        self.md_container = ipw.VBox([self.temperature, self.rcut])
+        self.md_container = ipw.VBox([self.temperature, self.rcut, self.length_nvt, self.length_nvt, self.length_tot_run, self.length_ncycles, self.n_snapshots, self.n_minimise_nvt, self.n_minimise_npt, self.padding, self.fixed_nvt, self.fixed_npt])
 
         self._render_basic_options()
 
