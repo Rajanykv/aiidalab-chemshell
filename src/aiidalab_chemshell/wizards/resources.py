@@ -52,13 +52,25 @@ class ComputationalResourcesWizardStep(ipw.VBox, awb.WizardAppWidgetStep):
         self.submit_btn.on_click(self._submit)
         add_button_style_class(self.submit_btn)
 
+        self.continue_btn = ipw.Button(
+            description="Reactivate",
+            disabled=True,
+            button_style="primary",
+            tooltip="Resubmit with the new workflow setup",
+            layout={"width": "30%", "height": "30px", "margin": "20px auto 8px", "display": "none"},
+        )
+        self.continue_btn.on_click(self._continue)
+        add_button_style_class(self.continue_btn)
+
+        self.submit_box = ipw.HBox( [self.submit_btn, self.continue_btn], layout=ipw.Layout(grid_gap="15px"))
+
         self.children = [
             chemshell_button_style(),
             # self.header,
             self.guide,
             self.chemsh_warning if not self.chemsh_installed else ipw.HTML(""),
             ResourceSetupBox(model=self.model),
-            self.submit_btn,
+            self.submit_box,
         ]
         return
 
@@ -78,9 +90,20 @@ class ComputationalResourcesWizardStep(ipw.VBox, awb.WizardAppWidgetStep):
             self.submit_btn.description = "Submitted"
             # Mark the (collapsed) step as complete via the AWB wizard icon.
             self.state = self.State.SUCCESS
+            self.continue_btn.disabled = False
+            self.continue_btn.layout.display = "inline-block"
+
         else:
             print("ERROR: Input Validation Failed")
         return
+
+    def _continue(self,_):
+        self.submit_btn.disabled = False
+        self.continue_btn.disabled = True
+        self.continue_btn.layout.display = "none"
+        self.submit_btn.description = "Submit the calculation"
+        self.model.submitted = False
+        self.state = self.State.READY
 
     def _refresh_widget(self) -> None:
         """Refresh the widget's contents."""
