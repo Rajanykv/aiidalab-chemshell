@@ -66,7 +66,7 @@ class ChemShellWorkflowModel(HasTraits):
     md_nsnapshots = Int(10, allow_none=False)
     md_fixed_npt  = Unicode("", allow_none=True)
     md_fixed_nvt  = Unicode("", allow_none=True)
-    md_dryrunmd = Bool(False, allow_none=True)
+    md_dryrunmd = Bool(True, allow_none=True)
 
     @property
     def has_box(self) -> bool:
