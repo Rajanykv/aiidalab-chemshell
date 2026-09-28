@@ -133,8 +133,8 @@ class SolvationWidget(ipw.VBox):
         self.advanced_esp_options.observe(self._render_input_options, names="value")
 
         self.do_md_dryrun = ipw.Dropdown(
-            options = {"Full run" : True, "Initial setup" : False},
-            value = False,
+            options = {"Full run" : False, "Initial setup" : True},
+            value = True,
             description = "Choose Full-Run/Initialisation only",
             disabled = False,
             layout = shared_layout,
