@@ -30,6 +30,7 @@ class ChemShellWorkflowModel(HasTraits):
     functional = Unicode("B3LYP", allow_none=False)
     basis_set = Unicode("cc-pvdz", allow_none=False)
     force_field = Instance(SinglefileData, allow_none=True)
+    solvent_ff = Instance(SinglefileData, allow_none=False)
     submitted = Bool(False).tag(sync=True)
     use_mm = Bool(False).tag(sync=True)
     vibrational_analysis = Bool(False).tag(sync=True)
@@ -51,7 +52,7 @@ class ChemShellWorkflowModel(HasTraits):
 
     default_guide = ""
 
-    solvent_box = Instance(SinglefileData, default=SinglefileData(file=SolventBoxOptions.WATER30.value), allow_none=False)
+    solvent_box = Instance(SinglefileData, default=SinglefileData(file=SolventBoxOptions.WATER30.value), allow_none=True)
 
     md_temperature = Float(300.0, allow_none=True)
     md_rcut = Float(20.0, allow_none=True)

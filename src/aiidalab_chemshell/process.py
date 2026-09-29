@@ -464,11 +464,13 @@ class ChemShellProcess:
                     "temperature" : self.model.workflow_model.md_temperature,
                     "rcut" : self.model.workflow_model.md_rcut
         }
-        if self.model.workflow_model.force_field:
-            builder.force_field_file = self.model.workflow_model.force_field
-        else:
-           #rajany todo: this is not correct. only a workaround to generate ff with dlfield
-           mm_parameters.update({"ff" : "pcff"})
+        #if self.model.workflow_model.solvent_ff:
+            #builder.force_field_file = self.model.workflow_model.solvent_ff
+            #mm_parameters.update({"ff" : f'{self.model.workflow_model.solvent_ff.filename:s}'})
+        #else:
+           #mm_parameters.update({"ff" : "pcff"})
+        #rajany todo: this will not be in final. a workaround to generate ff with dlfield
+        mm_parameters.update({"ff" : "pcff"})
         builder.mm_parameters = Dict(mm_parameters)
 
         builder.md_parameters = Dict({
