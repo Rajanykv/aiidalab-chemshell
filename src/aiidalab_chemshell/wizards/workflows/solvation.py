@@ -190,6 +190,7 @@ class SolvationWidget(ipw.VBox):
         self.solventbox_view_select.observe(self._view_solventbox, names ="value")
 
         self.solvent_structfile = FileUploadWidget(description ="Solvent Structure:")
+        self.solvent_structfile.layout.display="none"
         ipw.dlink((self.solvent_structfile, "file"), (self.model, "solvent_box"))
 
         self.qm_method_dropdown = ipw.Dropdown(
@@ -608,7 +609,7 @@ class SolvationWidget(ipw.VBox):
             if change["new"] == change["old"]:
                 return
             if change["new"] == "Upload":
-                self.solvent_structfile.layout.display=None
+                self.solvent_structfile.layout.display="flex"
             else:
                 self.model.solvent_box = SinglefileData(file = change["new"].value)
                 self.solvent_structfile.layout.display="none"
