@@ -87,6 +87,7 @@ class WorkflowWizardStep(ipw.VBox, awb.WizardAppWidgetStep):
         )
         self.submit_btn.on_click(self._submit)
         add_button_style_class(self.submit_btn)
+
         self.continue_btn = ipw.Button(
             description="Continue when ready",
             disabled=True,
@@ -134,6 +135,7 @@ class WorkflowWizardStep(ipw.VBox, awb.WizardAppWidgetStep):
             ):
                 print("ERROR: NEB calculation requires a second structure input.")
                 return
+
         # Disable the widgets and mark as submitted
         if self.workflow_tabs.selected_index == 0:
             self.workflow_tabs.children[0].disable(True)
@@ -141,17 +143,21 @@ class WorkflowWizardStep(ipw.VBox, awb.WizardAppWidgetStep):
             self.workflow_tabs.children[self.workflow_tabs.selected_index].disable()
 
         self.submit_btn.description = "Submitted"
-        #if self.workflow_tabs.selected_index == WorkflowOptions.CHARGE_FITTING:
+
+        self.submit_btn.disabled = True
+
+        # Mark the (collapsed) step as complete via the AWB wizard icon.
+        self.state = self.State.SUCCESS
+
         if self.model.workflow == WorkflowOptions.CHARGE_FITTING:
             self.submit_btn.description = "Charge Fitting Submitted"
         if self.workflow_tabs.selected_index == WorkflowOptions.SOLVATION:
             self.submit_btn.description = "Solvation Submitted"
 
-        self.submit_btn.disabled = True
-        self.continue_btn.disabled = False
-        self.continue_btn.layout.display = "inline-block"
-        # Mark the (collapsed) step as complete via the AWB wizard icon.
-        self.state = self.State.SUCCESS
+        if self.model.workflow == WorkflowOptions.SOLVATION:
+            self.continue_btn.disabled = False
+            self.continue_btn.layout.display = "inline-block"
+
         return
 
     def _generate_workflow_widgets(self, workflow: WorkflowOptions) -> ipw.VBox:
