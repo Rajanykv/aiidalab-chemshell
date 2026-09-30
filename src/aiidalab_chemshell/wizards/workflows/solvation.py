@@ -1,6 +1,8 @@
 """Defines the input widget for the a base single point energy calculation."""
 
 import ipywidgets as ipw
+import traitlets as tl
+
 from aiida_chemshell.utils import ChemShellQMTheory
 from alc_aiidalab_widgets.widgets import (
     FileUploadWidget,
@@ -58,9 +60,10 @@ class SolvationWidget(ipw.VBox):
         shared_style2 = {'description_width': '100px'}
 
         #background-color: #007bff;
+        #bg_color = "#2196F3"
         self.step_style ="""
              width: 60%; height: 30px;
-             background-color: #2196F3;
+             background-color: {bg_color};
              color: white;
              margin: auto;
              display: flex;
@@ -72,29 +75,36 @@ class SolvationWidget(ipw.VBox):
              """
         self.opt_label = ipw.HTML(
             value = f"""
-            <div style ="{self.step_style}">
+            <div style ="{self.step_style.format(bg_color = "#2196F3")}">
              Step 1: Optimise the Solute structure
              </div>
              """
         )
         self.esp_label = ipw.HTML(
             value = f"""
-            <div style ="{self.step_style}">
+            <div style ="{self.step_style.format(bg_color='#00BCD4')}">
              Step 2.1: Do Charge Fitting on the Optimised Solute and Generate Combined Force-field
              </div>
              """
         )
         self.md_label = ipw.HTML(
             value = f"""
-            <div style ="{self.step_style}">
-            Step 3: Run full MD in the selected Solvent
+            <div style ="{self.step_style.format(bg_color='#00BCD4')}">
+            Step 2.2: Run MD equillibration in the selected Solvent
              </div>
              """
         )
         self.dryrun_label = ipw.HTML(
             value = f"""
-            <div style ="{self.step_style}">
+            <div style ="{self.step_style.format(bg_color = "#2196F3")}">
             Step 2: Solvate in a Solvent of choice
+             </div>
+             """
+        )
+        self.qmmm_label = ipw.HTML(
+            value = f"""
+            <div style ="{self.step_style.format(bg_color = "#2196F3")}">
+            Step 3: Run QM/MM
              </div>
              """
         )
@@ -104,7 +114,8 @@ class SolvationWidget(ipw.VBox):
             tooltip ="Submit the part of the calculation",
             icon ="check",
             layout ={"width": "40%", "height": "30px", "margin": "30px auto 30px auto"},
-            style ={"button_color": "#005A5B", "text_color": "white"}
+            #style ={"button_color": "#005A5B", "text_color": "white"}
+            style ={"button_color": "#5CB85C", "text_color": "white"}
         )
         self.submit_dry_btn.on_click(self._submit_dry)
 
@@ -124,13 +135,13 @@ class SolvationWidget(ipw.VBox):
         )
         self.esp_qm_options.observe(self._render_input_options, names ="value")
 
-        self.advanced_mm_options = ipw.Checkbox(
-            value = False, description="Show Advanced MM Options",
+        self.advanced_qmmm_options = ipw.Checkbox(
+            value = False, description="Show Advanced QMMM Options",
             layout = shared_layout2,
             style = shared_style2,
             index = True
         )
-        self.advanced_mm_options.observe(self._render_input_options, names ="value")
+        self.advanced_qmmm_options.observe(self._render_input_options, names ="value")
 
         self.advanced_md_options = ipw.Checkbox(
             value = False, description="Show Advanced MD Options",
@@ -166,8 +177,9 @@ class SolvationWidget(ipw.VBox):
             layout = shared_layout,
             style = shared_style,
         )
-        box_options = {b.label: b for b in SolventBoxOptions}
-        box_options["Upload new Box"] = "Upload"
+
+        self.UPLOAD = tl.Instance(SinglefileData)
+        box_options = [(b.label,b.value) for b in SolventBoxOptions] +[("Upload new Box", self.UPLOAD)]
         self.solventbox_dropdown = ipw.Dropdown(
             options = box_options,
             disabled = False,
@@ -176,8 +188,7 @@ class SolvationWidget(ipw.VBox):
             style = shared_style,
         )
         self.solventbox_dropdown.index = 0
-
-        #_update_solventbox_set({"new": self.solventbox_dropdown.value, "old": None})
+        self.model.solvent_box = SinglefileData(file = self.solventbox_dropdown.value)
         self.solventbox_dropdown.observe(self._update_solventbox_set, names ="value")
 
         self.solventbox_view_select = ipw.Checkbox(
@@ -191,7 +202,7 @@ class SolvationWidget(ipw.VBox):
 
         self.solvent_structfile = FileUploadWidget(description ="Solvent Structure:")
         self.solvent_structfile.layout.display="none"
-        ipw.dlink((self.solvent_structfile, "file"), (self.model, "solvent_box"))
+        self.solvent_structfile.observe(self._on_file_upload, names="file")
 
         self.qm_method_dropdown = ipw.Dropdown(
             options ={"DFT" : True, "HF" : False},
@@ -246,7 +257,7 @@ class SolvationWidget(ipw.VBox):
             layout = shared_layout,
             style = shared_style,
         )
-        link((self.model, "esp_functional"), (self.functional, "value"))
+        link((self.model, "esp_functional"), (self.esp_functional, "value"))
         self.esp_qm_method_dropdown = ipw.Dropdown(
             options ={"DFT" : True, "HF" : False},
             description ="SCF method:",
@@ -265,7 +276,7 @@ class SolvationWidget(ipw.VBox):
         )
         self.enable_mm_chk.observe(self._render_input_options, names ="value")
 
-        self.advanced_mm_options.observe(self._render_input_options, names ="value")
+        self.advanced_qmmm_options.observe(self._render_input_options, names ="value")
         ipw.dlink((self.enable_mm_chk, "value"), (self.model, "use_mm"))
 
         # MM Backend
@@ -279,15 +290,6 @@ class SolvationWidget(ipw.VBox):
          )
         ipw.dlink((self.mm_theory_dropdown, "value"), (self.model, "mm_theory"))
 
-        # QM region for QM/MM calculation
-        self.qm_region_text = ipw.Text(
-            value ="",
-            description ="QM Region:",
-            disabled = False,
-            layout = shared_layout,
-            style = shared_style,
-        )
-        link((self.qm_region_text, "value"), (self.model, "qm_region"))
 
         # Force Field File
         #self.ff_file = FileUploadWidget(description ="Force Field:")
@@ -469,6 +471,33 @@ class SolvationWidget(ipw.VBox):
 
         self.md_container = ipw.VBox([self.temperature, self.rcut, self.length_npt, self.length_nvt, self.length_tot_run, self.length_ncycles, self.n_snapshots, self.n_minimise_nvt, self.n_minimise_npt, self.padding, self.fixed_nvt, self.fixed_npt])
 
+        self.qmmm_padding = ipw.FloatText(
+            value =20.0,
+            description ="Padding",
+            disabled = False,
+            layout = shared_layout,
+            style = shared_style,
+        )
+        link((self.model, "qmmm_padding"), (self.qmmm_padding, "value"))
+        self.qmmm_basis_string = ipw.Text(
+            value ="",
+            description ="Basis Set:",
+            disabled = False,
+            layout = shared_layout,
+            style = shared_style,
+        )
+        link((self.model, "qmmm_basis_set"), (self.qmmm_basis_string, "value"))
+        self.qmmm_functional = ipw.Text(
+            value ="B3LYP",
+            description ="Functional:",
+            disabled = False,
+            layout = shared_layout,
+            style = shared_style,
+        )
+        link((self.model, "qmmm_functional"), (self.qmmm_functional, "value"))
+
+        self.qmmm_container = ipw.VBox([self.qmmm_padding, self.qmmm_basis_string, self.qmmm_functional])
+
         self._render_basic_options()
 
     def _render_basic_options(self) -> None:
@@ -490,10 +519,10 @@ class SolvationWidget(ipw.VBox):
             self.esp_qm_options,
             self.submit_dry_btn,
             self.md_label,
-            #self.advanced_mm_options,
             self.advanced_md_options,
             #self.do_md_dryrun,
-            self.enable_mm_chk,
+            self.qmmm_label,
+            self.advanced_qmmm_options,
         ]
         if self.enable_mm_chk.value:
             children.append(self.qm_region_text)
@@ -514,7 +543,6 @@ class SolvationWidget(ipw.VBox):
             self.solventbox_view_select,
             self.viewer,
             self.mm_theory_dropdown,
-            #self.advanced_mm_options
         ])
         children.extend([self.esp_label, self.advanced_esp_options,
                         self.esp_method_dropdown])
@@ -526,18 +554,15 @@ class SolvationWidget(ipw.VBox):
         if self.esp_qm_options.value:
             children.append(self.esp_qm_container)
 
-        #if self.advanced_mm_options.value:
-        #    children.append(self.mm_container)
         children.append(self.submit_dry_btn)
-        children.append([self.md_label, self.advanced_md_options])
+        children.extend([self.md_label, self.advanced_md_options])
         if self.advanced_md_options.value:
             children.append(self.md_container)
 
-        children.append(self.enable_mm_chk)
-        if self.enable_mm_chk.value:
-            children.append(self.qm_region_text)
-
-        #children.append(self.do_md_dryrun)
+        children.append(self.qmmm_label)
+        children.append(self.advanced_qmmm_options)
+        if self.advanced_qmmm_options.value:
+            children.append(self.qmmm_container)
 
         self.children = children
 
@@ -604,14 +629,17 @@ class SolvationWidget(ipw.VBox):
         except Exception as e:
             raise e
 
+    def _on_file_upload(self, change: dict) -> None:
+        self.model.solvent_box = change["new"]
+
     def _update_solventbox_set(self, change: dict) -> None:
             """Update Solvent boxes based of the user's choice."""
             if change["new"] == change["old"]:
                 return
-            if change["new"] == "Upload":
+            if change["new"] is self.UPLOAD:
                 self.solvent_structfile.layout.display="flex"
             else:
-                self.model.solvent_box = SinglefileData(file = change["new"].value)
+                self.model.solvent_box = SinglefileData(file = change["new"])
                 self.solvent_structfile.layout.display="none"
             return
 

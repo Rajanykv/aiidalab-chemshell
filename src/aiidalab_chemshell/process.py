@@ -5,8 +5,10 @@ import traitlets as tl
 from aiida.engine import submit
 from aiida.orm import Dict, load_code
 from aiida.plugins import WorkflowFactory
+from aiida.orm import SinglefileData
 
 from aiidalab_chemshell.common.chemshell import WorkflowOptions
+from aiidalab_chemshell.common.chemshell import SolventBoxOptions
 from aiidalab_chemshell.models.structure import StructureInputModel
 from aiidalab_chemshell.models.workflow import ChemShellWorkflowModel
 from aiidalab_chemshell.wizards.resources import ComputationalResourcesModel
@@ -485,9 +487,22 @@ class ChemShellProcess:
             'nsnapshots' : self.model.workflow_model.md_nsnapshots,
             "fixed_npt" : self.model.workflow_model.md_fixed_npt,
         })
-        builder.solvent_box =  self.model.workflow_model.solvent_box
+        if self.model.workflow_model.solvent_box:
+            builder.solvent_box =  self.model.workflow_model.solvent_box
+        else:
+            builder.solvent_box =  SinglefileData(file = SolventBoxOptions.WATER30.value)
 
         builder.dryrunmd = self.model.workflow_model.md_dryrunmd
+
+        builder.qmmm_parameters = Dict(
+            {
+                "method": "dft" if self.model.workflow_model.esp_use_dft else "hf",
+                "functional": self.model.workflow_model.qmmm_functional,
+                "basis": self.model.workflow_model.qmmm_basis_set,
+                "padding": self.model.workflow_model.qmmm_padding,
+            }
+        )
+
         self.node = submit(builder)
         self.node.label = self.model.resource_model.process_label
         self.node.description = self.model.resource_model.process_description
