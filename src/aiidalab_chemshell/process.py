@@ -494,17 +494,17 @@ class ChemShellProcess:
 
         builder.dryrunmd = self.model.workflow_model.md_dryrunmd
 
-        qm_parameters =
-            {
+        qm_parameters ={
+            
                 "method": "dft" if self.model.workflow_model.esp_use_dft else "hf",
                 "functional": self.model.workflow_model.qmmm_functional,
                 "basis": self.model.workflow_model.qmmm_basis_set,
             }
 
-        builder.qmmm_parameters = Dict(
+        builder.qmmm_parameters = Dict({
             "qm_parameters" : qm_parameters,
                 "padding": self.model.workflow_model.qmmm_padding,
-        )
+                })
 
         self.node = submit(builder)
         self.node.label = self.model.resource_model.process_label
