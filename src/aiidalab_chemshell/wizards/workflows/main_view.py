@@ -88,37 +88,17 @@ class WorkflowWizardStep(ipw.VBox, awb.WizardAppWidgetStep):
         self.submit_btn.on_click(self._submit)
         add_button_style_class(self.submit_btn)
 
-        self.continue_btn = ipw.Button(
-            description="Continue when ready",
-            disabled=True,
-            button_style="primary",
-            tooltip="Refresh and continue workflow setup",
-            layout={"width": "60%", "height": "30px", "margin": "20px auto 8px", "display": "none"},
-        )
-        self.continue_btn.on_click(self._continue)
-        add_button_style_class(self.continue_btn)
-
-        self.submit_box = ipw.HBox( [self.submit_btn, self.continue_btn], layout=ipw.Layout(grid_gap="15px"))
         # Create the wizard from the component widgets
         self.children = [
             chemshell_button_style(),
             self.header,
             self.guide,
             self.workflow_tabs,
-            self.submit_box,
+            self.submit_btn,
         ]
         self.rendered = True
         self.workflow_tabs.children[self.workflow_tabs.selected_index].render()
         return
-
-    def _continue(self,_):
-        self.submit_btn.disabled = False
-        self.continue_btn.disabled = True
-        self.continue_btn.layout.display = "none"
-        self.submit_btn.description = "Submit Options"
-        self.workflow_tabs.children[self.workflow_tabs.selected_index].disable(False)
-        self.state = self.State.READY
-
 
     def _submit(self, _):
         """Store the ChemShell parameters in the ChemShell workflow model."""
@@ -135,17 +115,13 @@ class WorkflowWizardStep(ipw.VBox, awb.WizardAppWidgetStep):
             ):
                 print("ERROR: NEB calculation requires a second structure input.")
                 return
-
         # Disable the widgets and mark as submitted
         if self.workflow_tabs.selected_index == 0:
             self.workflow_tabs.children[0].disable(True)
         else:
             self.workflow_tabs.children[self.workflow_tabs.selected_index].disable()
-
         self.submit_btn.description = "Submitted"
-
         self.submit_btn.disabled = True
-
         # Mark the (collapsed) step as complete via the AWB wizard icon.
         self.state = self.State.SUCCESS
 
@@ -153,10 +129,6 @@ class WorkflowWizardStep(ipw.VBox, awb.WizardAppWidgetStep):
             self.submit_btn.description = "Charge Fitting Submitted"
         if self.workflow_tabs.selected_index == WorkflowOptions.SOLVATION:
             self.submit_btn.description = "Solvation Submitted"
-
-        if self.model.workflow == WorkflowOptions.SOLVATION:
-            self.continue_btn.disabled = False
-            self.continue_btn.layout.display = "inline-block"
 
         return
 
