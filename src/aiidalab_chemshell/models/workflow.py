@@ -30,7 +30,7 @@ class ChemShellWorkflowModel(HasTraits):
     functional = Unicode("B3LYP", allow_none=False)
     basis_set = Unicode("cc-pvdz", allow_none=False)
     force_field = Instance(SinglefileData, allow_none=True)
-    solvent_ff = Instance(SinglefileData, allow_none=False)
+    solvent_ff = Instance(SinglefileData, allow_none=True)
     submitted = Bool(False).tag(sync=True)
     use_mm = Bool(False).tag(sync=True)
     vibrational_analysis = Bool(False).tag(sync=True)
