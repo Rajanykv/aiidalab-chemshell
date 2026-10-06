@@ -505,8 +505,8 @@ class ChemShellProcess:
                 })
 
         builder.solvent_parameters = Dict({
-            "box"  : self.model.solvent_boxsize,
-            "solv"   : self.model.solvent_name,
+            "box"  : self.model.workflow_model.solvent_boxsize,
+            "solv"   : self.model.workflow_model.solvent_name,
                 })
 
         self.node = submit(builder)
