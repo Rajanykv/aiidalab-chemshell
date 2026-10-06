@@ -2,7 +2,7 @@
 
 from enum import Enum, auto, IntEnum
 from pathlib import Path
-
+from collections import namedtuple
 
 class BasisSetOptions(Enum):
     """Pre-defined basis set levels for simplified ChemShell inputs."""
@@ -73,40 +73,40 @@ class WorkflowOptions(IntEnum):
             case _:
                 return "ChemShell"
 
+Props = namedtuple("Props", ["filepath", "label", "cube_length", "name"])
+dataroot = Path("/opt/chemsh-py/data/solvent_boxes")
 class SolventBoxOptions(Enum):
     """Enum defining the available Solvent Boxes."""
 
-    _ignore_ = 'dataroot'
-    dataroot = Path("/opt/chemsh-py/data/solvent_boxes")
+    #_ignore_ = 'dataroot'
 
-    WATER30 = dataroot/"water-box30-100ns.pqr"
-    WATER40 =  dataroot/"water-box40-100ns.pqr"
-    HEPTANE30 = dataroot/"heptane-box30-100ns.pqr"
-    HEPTANE40 = dataroot/"heptane-box40-100ns.pqr"
-    METHANOL30 = dataroot/"methanol-box30-100ns.pqr"
-    METHANOL40 = dataroot/"methanol-box40-100ns.pqr"
-    CHLOROFORM30 = dataroot/"chloroform-box30-100ns.pqr"
-    CHLOROFORM40 = dataroot/"chloroform-box40-100ns.pqr"
+    WATER30 = 0
+    WATER40 =  auto()
+    HEPTANE30 = auto()
+    HEPTANE40 = auto()
+    METHANOL30 = auto()
+    METHANOL40 = auto()
+    CHLOROFORM30 = auto()
+    CHLOROFORM40 = auto()
 
     @property
-    def label(self) -> str:
-        """Convert enum value into a more human readable string."""
+    def properties(self) -> tuple :
         match self:
             case SolventBoxOptions.WATER30:
-                return "Water Box 30A cube"
+                return Props(dataroot/"water-box30-100ns.pqr" , "Water Box 30A cube", 30, "water")
             case SolventBoxOptions.WATER40:
-                return "Water Box 40A cube"
+                return Props(dataroot/"water-box40-100ns.pqr", "Water Box 40A cube", 40, "water")
             case SolventBoxOptions.HEPTANE30:
-                return "Heptane Box 30A cube"
+                return Props(dataroot/"heptane-box30-100ns.pqr", "Heptane Box 30A cube", 30, "heptane")
             case SolventBoxOptions.HEPTANE40:
-                return "Heptane Box 40A cube"
+                return Props(dataroot/"heptane-box40-100ns.pqr", "Heptane Box 40A cube", 40, "heptane")
             case SolventBoxOptions.METHANOL30:
-                return "Methanol Box 30A cube"
+                return Props(dataroot/"methanol-box30-100ns.pqr", "Methanol Box 30A cube", 30, "methanol")
             case SolventBoxOptions.METHANOL40:
-                return "Methanol Box 40A cube"
+                return Props(dataroot/"methanol-box40-100ns.pqr", "Methanol Box 40A cube", 40, "methanol")
             case SolventBoxOptions.CHLOROFORM30:
-                return "Chloroform 30A cube"
+                return Props(dataroot/"chloroform-box30-100ns.pqr", "Chloroform 30A cube", 30, "chloroform")
             case SolventBoxOptions.CHLOROFORM40:
-                return "Chloroform 40A cube"
+                return Props(dataroot/"chloroform-box40-100ns.pqr", "Chloroform 40A cube", 40, "chloroform")
             case _:
-                return ""
+                return Propes("Select","Select",0,"Select")

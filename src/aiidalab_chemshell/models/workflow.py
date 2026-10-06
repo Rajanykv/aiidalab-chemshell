@@ -52,7 +52,9 @@ class ChemShellWorkflowModel(HasTraits):
 
     default_guide = ""
 
-    solvent_box = Instance(SinglefileData, default=SinglefileData(file=SolventBoxOptions.WATER30.value), allow_none=False)
+    solvent_box = Instance(SinglefileData, default=SinglefileData(file=SolventBoxOptions.WATER30.properties.filepath), allow_none=False)
+    solvent_name= Unicode("water", allow_none=False)
+    solvent_boxsize = Float(30.0, allow_none=False)
 
     md_temperature = Float(300.0, allow_none=True)
     md_rcut = Float(20.0, allow_none=True)

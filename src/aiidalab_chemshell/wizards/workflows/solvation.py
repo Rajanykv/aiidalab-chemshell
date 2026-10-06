@@ -179,7 +179,9 @@ class SolvationWidget(ipw.VBox):
         )
 
         self.UPLOAD = tl.Instance(SinglefileData)
-        box_options = [(b.label,b.value) for b in SolventBoxOptions] +[("Upload new Box", self.UPLOAD)]
+
+        box_options = [(b.properties.label,b.properties.filepath) for b in SolventBoxOptions] +[("Upload new Box", self.UPLOAD)]
+
         self.solventbox_dropdown = ipw.Dropdown(
             options = box_options,
             disabled = False,
@@ -203,6 +205,49 @@ class SolvationWidget(ipw.VBox):
         self.solvent_structfile = FileUploadWidget(description ="Solvent Structure:")
         self.solvent_structfile.layout.display="none"
         self.solvent_structfile.observe(self._on_file_upload, names="file")
+
+        #self.solventbox_size = ipw.Dropdown(
+        #    disabled = False,
+        #    description ="Solvent Box Side Length",
+        #    layout = shared_layout,
+        #    style = shared_style,
+        #)
+        #self.solventbox_size.index = 0
+
+        self.boxlength_options = [str(b.properties.cube_length) for b in SolventBoxOptions]
+        self.solventbox_size = ipw.Combobox(
+            options = self.boxlength_options,
+            ensure_option=False,
+            placeholder='Type Length',
+            value= "30",
+            disabled = False,
+            description ="Solvent Box Side Length",
+            layout = shared_layout,
+            style = shared_style,
+        )
+        self.model.solvent_boxsize= int(self.solventbox_size.value)
+
+        #self.solventname_drop = ipw.Dropdown(
+        #    options = [b.properties.name for b in SolventBoxOptions],
+        #    disabled = False,
+        #    description ="Solvent Name",
+        #    layout = shared_layout,
+        #    style = shared_style,
+        #)
+        #self.solventname_drop.index = 0
+
+        self.name_options = [b.properties.name for b in SolventBoxOptions]
+        self.solventname_drop = ipw.Combobox(
+            options = self.name_options,
+            ensure_option=False,
+            placeholder='Type name',
+            value= "water",
+            disabled = False,
+            description ="Solvent Name",
+            layout = shared_layout,
+            style = shared_style,
+        )
+        self.model.solvent_name = self.solventname_drop.value
 
         self.qm_method_dropdown = ipw.Dropdown(
             options ={"DFT" : True, "HF" : False},
@@ -497,6 +542,7 @@ class SolvationWidget(ipw.VBox):
         link((self.model, "qmmm_functional"), (self.qmmm_functional, "value"))
 
         self.qmmm_container = ipw.VBox([self.qmmm_padding, self.qmmm_basis_string, self.qmmm_functional])
+        self.solvent_container = ipw.VBox([self.solventbox_dropdown, self.solventname_drop, self.solventbox_size])
 
         self._render_basic_options()
 
@@ -508,7 +554,7 @@ class SolvationWidget(ipw.VBox):
             self.advanced_qm_options,
             self.basis_dropdown,
             self.dryrun_label,
-            self.solventbox_dropdown,
+            self.solvent_container,
             self.solvent_structfile,
             self.solventbox_view_select,
             self.viewer,
@@ -538,7 +584,7 @@ class SolvationWidget(ipw.VBox):
 
         children.extend([
             self.dryrun_label,
-            self.solventbox_dropdown,
+            self.solvent_container,
             self.solvent_structfile,
             self.solventbox_view_select,
             self.viewer,
@@ -641,6 +687,13 @@ class SolvationWidget(ipw.VBox):
             else:
                 self.model.solvent_box = SinglefileData(file = change["new"])
                 self.solvent_structfile.layout.display="none"
+
+                #self.solventname_drop.index = self.solventbox_dropdown.index
+                #self.solventbox_size.index = self.solventbox_dropdown.index
+                self.solventbox_size.value = str(self.boxlength_options[self.solventbox_dropdown.index])
+                self.solventname_drop.value = self.name_options[self.solventbox_dropdown.index]
+                self.model.solvent_name = self.solventname_drop.value
+                self.model.solvent_boxsize= int(self.solventbox_size.value)
             return
 
     def disable(self, disabled: bool = True) -> None:
