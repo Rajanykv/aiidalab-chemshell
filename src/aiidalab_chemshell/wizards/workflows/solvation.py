@@ -558,14 +558,14 @@ class SolvationWidget(ipw.VBox):
             self.solvent_structfile,
             self.solventbox_view_select,
             self.viewer,
-            self.mm_theory_dropdown,
             self.esp_label,
             self.advanced_esp_options,
             self.esp_method_dropdown,
             self.esp_qm_options,
-            self.submit_dry_btn,
+            self.mm_theory_dropdown,
             self.md_label,
             self.advanced_md_options,
+            self.submit_dry_btn,
             #self.do_md_dryrun,
             self.qmmm_label,
             self.advanced_qmmm_options,
@@ -588,7 +588,6 @@ class SolvationWidget(ipw.VBox):
             self.solvent_structfile,
             self.solventbox_view_select,
             self.viewer,
-            self.mm_theory_dropdown,
         ])
         children.extend([self.esp_label, self.advanced_esp_options,
                         self.esp_method_dropdown])
@@ -600,10 +599,11 @@ class SolvationWidget(ipw.VBox):
         if self.esp_qm_options.value:
             children.append(self.esp_qm_container)
 
-        children.append(self.submit_dry_btn)
+        children.append(self.mm_theory_dropdown)
         children.extend([self.md_label, self.advanced_md_options])
         if self.advanced_md_options.value:
             children.append(self.md_container)
+        children.append(self.submit_dry_btn)
 
         children.append(self.qmmm_label)
         children.append(self.advanced_qmmm_options)
