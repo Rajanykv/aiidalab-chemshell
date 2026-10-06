@@ -470,16 +470,15 @@ class ChemShellProcess:
             #builder.force_field_file = self.model.workflow_model.solvent_ff
             #mm_parameters.update({"ff" : f'{self.model.workflow_model.solvent_ff.filename:s}'})
         #else:
-           #mm_parameters.update({"ff" : "pcff"})
         #rajany todo: this will not be in final. a workaround to generate ff with dlfield
-        mm_parameters.update({"ff" : "pcff"})
+           #mm_parameters.update({"ff" : "pcff"})
         builder.mm_parameters = Dict(mm_parameters)
 
         builder.md_parameters = Dict({
             "length_npt" : self.model.workflow_model.md_length_npt,
             "length_nvt" : self.model.workflow_model.md_length_nvt,
             "length_production" : self.model.workflow_model.md_length_production,
-	    "max_ncycles" : self.model.workflow_model.md_max_ncycles,
+	        "max_ncycles" : self.model.workflow_model.md_max_ncycles,
             'minimisation_npt' :self.model.workflow_model.md_minimisation_npt,
             'minimisation_nvt' : self.model.workflow_model.md_minimisation_nvt,
             'solutes_dist' : self.model.workflow_model.md_solutes_dist,
