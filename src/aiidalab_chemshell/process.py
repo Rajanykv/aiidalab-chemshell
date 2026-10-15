@@ -469,8 +469,9 @@ class ChemShellProcess:
                     "theory": self.model.workflow_model.mm_theory,
                     "temperature" : self.model.workflow_model.md_temperature,
         }
-        if self.model.workflow_model.md_rcut > 0.0:
-            mm_parameters.update( {"rcut" : self.model.workflow_model.md_rcut} )
+        if self.model.workflow_model.mm_theory.lower() == "dl_poly":
+            if self.model.workflow_model.md_rcut > 0.0:
+                mm_parameters.update( {"rcut" : self.model.workflow_model.md_rcut} )
         if self.model.workflow_model.solvent_ff:
             builder.force_field_file = self.model.workflow_model.solvent_ff
         else:
