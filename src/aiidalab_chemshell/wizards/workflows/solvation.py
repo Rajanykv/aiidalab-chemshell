@@ -83,7 +83,7 @@ class SolvationWidget(ipw.VBox):
         self.esp_label = ipw.HTML(
             value = f"""
             <div style ="{self.step_style.format(bg_color='#00BCD4')}">
-             Step 2.1: Do Charge Fitting on the Optimised Solute and Generate Combined Force-field
+             Step 2.1: Do Charge Fitting on the Optimised Solute
              </div>
              """
         )
@@ -131,34 +131,30 @@ class SolvationWidget(ipw.VBox):
             value = False, description="Show QM Option for (R)ESP",
             layout = shared_layout2,
             style = shared_style2,
-            index = True
         )
-        self.esp_qm_options.observe(self._render_input_options, names ="value")
+        self.esp_qm_options.observe(self._render_options, names ="value")
 
         self.advanced_qmmm_options = ipw.Checkbox(
             value = False, description="Show Advanced QMMM Options",
             layout = shared_layout2,
             style = shared_style2,
-            index = True
         )
-        self.advanced_qmmm_options.observe(self._render_input_options, names ="value")
+        self.advanced_qmmm_options.observe(self._render_options, names ="value")
 
         self.advanced_md_options = ipw.Checkbox(
             value = False, description="Show Advanced MD Options",
             layout = shared_layout2,
             style = shared_style2,
-            index = True
         )
-        self.advanced_md_options.observe(self._render_input_options, names ="value")
+        self.advanced_md_options.observe(self._render_options, names ="value")
 
         self.advanced_esp_options = ipw.Checkbox(
             value = False,
             description ="Show Advanced ChargeFit Options",
             layout = shared_layout2,
             style = shared_style2,
-            index = True
         )
-        self.advanced_esp_options.observe(self._render_input_options, names ="value")
+        self.advanced_esp_options.observe(self._render_options, names ="value")
 
         self.do_md_dryrun = ipw.Dropdown(
             options = {"Full run" : False, "Initial setup" : True},
@@ -208,7 +204,7 @@ class SolvationWidget(ipw.VBox):
 
         #self.solventbox_size = ipw.Dropdown(
         #    disabled = False,
-        #    description ="Solvent Box Side Length",
+        #    description ="Box Half Side-length",
         #    layout = shared_layout,
         #    style = shared_style,
         #)
@@ -221,7 +217,7 @@ class SolvationWidget(ipw.VBox):
             placeholder='Type Length',
             value= "30",
             disabled = False,
-            description ="Solvent Box Side Length",
+            description ="Half Side-length",
             layout = shared_layout,
             style = shared_style,
         )
@@ -285,7 +281,24 @@ class SolvationWidget(ipw.VBox):
         )
         link((self.model, "functional"), (self.functional, "value"))
 
-        self.qm_container = ipw.VBox([self.backend, self.qm_method_dropdown, self.basis_string, self.functional])
+        self.dispersion = ipw.Text(
+            value ="",
+            description ="Dispersion:",
+            disabled = False,
+            layout = shared_layout,
+            style = shared_style,
+        )
+        link((self.model, "nw_dispersion"), (self.dispersion, "value"))
+
+        self.energy_tol = ipw.FloatText(
+            description ="Energy Tolerance:",
+            disabled = False,
+            layout = shared_layout,
+            style = shared_style,
+        )
+        link((self.model, "nw_tol_energy"), (self.energy_tol, "value"))
+
+        self.qm_container = ipw.VBox([self.backend, self.qm_method_dropdown, self.basis_string, self.functional, self.dispersion, self.energy_tol])
 
         self.esp_basis_string = ipw.Text(
             value ="",
@@ -319,9 +332,9 @@ class SolvationWidget(ipw.VBox):
             layout = shared_layout2,
             style = shared_style2,
         )
-        self.enable_mm_chk.observe(self._render_input_options, names ="value")
+        self.enable_mm_chk.observe(self._render_options, names ="value")
 
-        self.advanced_qmmm_options.observe(self._render_input_options, names ="value")
+        self.advanced_qmmm_options.observe(self._render_options, names ="value")
         ipw.dlink((self.enable_mm_chk, "value"), (self.model, "use_mm"))
 
         # MM Backend
@@ -562,8 +575,8 @@ class SolvationWidget(ipw.VBox):
             self.advanced_esp_options,
             self.esp_method_dropdown,
             self.esp_qm_options,
-            self.mm_theory_dropdown,
             self.md_label,
+            self.mm_theory_dropdown,
             self.advanced_md_options,
             self.submit_dry_btn,
             #self.do_md_dryrun,
@@ -599,8 +612,8 @@ class SolvationWidget(ipw.VBox):
         if self.esp_qm_options.value:
             children.append(self.esp_qm_container)
 
-        children.append(self.mm_theory_dropdown)
         children.extend([self.md_label, self.advanced_md_options])
+        children.append(self.mm_theory_dropdown)
         if self.advanced_md_options.value:
             children.append(self.md_container)
         children.append(self.submit_dry_btn)
@@ -614,14 +627,30 @@ class SolvationWidget(ipw.VBox):
 
         return
 
+    def _render_options(self, change: dict) -> None:
+        """Switch between basic and advanced views."""
+        if change["new"]:
+            self._render_advanced_options()
+        else:
+            if not self._rendered:
+                self._render_basic_options()
+            else:
+                self._render_advanced_options()
+        self._rendered = True
+        return
+
     def _render_input_options(self, change: dict) -> None:
         """Switch between basic and advanced views."""
         if change["new"]:
             self._render_advanced_options()
         else:
-            self._render_basic_options()
+            if not self._rendered:
+                self._render_basic_options()
+            else:
+                self._render_advanced_options()
             # Update the linked basis set value
             self._update_basis_set({"new": self.basis_dropdown.value, "old": None})
+        self._rendered = True
         return
 
     def _update_basis_set(self, change: dict) -> None:

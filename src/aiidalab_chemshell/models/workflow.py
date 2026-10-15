@@ -54,10 +54,11 @@ class ChemShellWorkflowModel(HasTraits):
 
     solvent_box = Instance(SinglefileData, default=SinglefileData(file=SolventBoxOptions.WATER30.properties.filepath), allow_none=False)
     solvent_name= Unicode("water", allow_none=False)
-    solvent_boxsize = Int(30, allow_none=False)
+    solvent_boxsize = Int(30, allow_none=True)
 
     md_temperature = Float(300.0, allow_none=True)
-    md_rcut = Float(20.0, allow_none=True)
+    #md_rcut = Float(20.0, allow_none=True)
+    md_rcut = Float(allow_none=True)
     md_length_npt = Int(50, allow_none=False)
     md_length_nvt = Int(20, allow_none=False)
     md_length_production = Int(20, allow_none=False)
@@ -70,10 +71,14 @@ class ChemShellWorkflowModel(HasTraits):
     md_fixed_npt  = Unicode("", allow_none=True)
     md_fixed_nvt  = Unicode("", allow_none=True)
     md_dryrunmd = Bool(False, allow_none=True)
+    md_freeze_solute = Bool(True, allow_none=False)
 
     qmmm_padding = Float(50.0, allow_none=True)
     qmmm_functional = Unicode("B3LYP", allow_none=True)
     qmmm_basis_set = Unicode("cc-pvdz", allow_none=True)
+
+    nw_dispersion = Unicode(allow_none=True)
+    nw_tol_energy = Float(1.E-6, allow_none=True)
 
     @property
     def has_box(self) -> bool:

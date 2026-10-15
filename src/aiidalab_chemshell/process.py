@@ -424,14 +424,18 @@ class ChemShellProcess:
             builder.structure = self.model.structure_model.structure_file
         else:
             builder.structure = self.model.structure_model.structure
-        builder.qm_parameters = Dict(
-            {
+        qm_parameters = {
                 "theory": self.model.workflow_model.qm_theory.name,
                 "method": "dft" if self.model.workflow_model.use_dft else "hf",
                 "functional": self.model.workflow_model.functional,
                 "basis": self.model.workflow_model.basis_set,
             }
-        )
+        if self.model.workflow_model.qm_theory.name.lower() == "nwchem":
+            if self.model.workflow_model.nw_dispersion:
+                qm_parameters.update({"dispersion" : self.model.workflow_model.nw_dispersion})
+            if self.model.workflow_model.nw_tol_energy:
+                qm_parameters.update({"tol_energy" : self.model.workflow_model.nw_tol_energy})
+        builder.qm_parameters = Dict(qm_parameters)
 
         builder.chemsh.metadata.options.resources = {
             "num_mpiprocs_per_machine": self.model.resource_model.ncpus,
@@ -464,13 +468,13 @@ class ChemShellProcess:
         mm_parameters = {
                     "theory": self.model.workflow_model.mm_theory,
                     "temperature" : self.model.workflow_model.md_temperature,
-                    "rcut" : self.model.workflow_model.md_rcut
         }
+        if self.model.workflow_model.md_rcut > 0.0:
+            mm_parameters.update( {"rcut" : self.model.workflow_model.md_rcut} )
         if self.model.workflow_model.solvent_ff:
             builder.force_field_file = self.model.workflow_model.solvent_ff
         else:
-            #rajany: this is not used; added just to avoid the additional inputs validation in chemshell failing.
-            mm_parameters.update({"ff" : "pcff"})
+            mm_parameters.update({"ff" : "charmm"})
         builder.mm_parameters = Dict(mm_parameters)
 
         builder.md_parameters = Dict({
@@ -484,6 +488,7 @@ class ChemShellProcess:
             'padding' : self.model.workflow_model.md_padding,
             'nsnapshots' : self.model.workflow_model.md_nsnapshots,
             "fixed_npt" : self.model.workflow_model.md_fixed_npt,
+            "freeze_solute" : self.model.workflow_model.md_freeze_solute,
         })
         if self.model.workflow_model.solvent_box:
             builder.solvent_box =  self.model.workflow_model.solvent_box
@@ -504,8 +509,8 @@ class ChemShellProcess:
                 })
 
         builder.solvent_parameters = Dict({
-            "box"  : self.model.workflow_model.solvent_boxsize,
-            "solv"   : self.model.workflow_model.solvent_name,
+            "box_halflength"  : self.model.workflow_model.solvent_boxsize,
+            "solvent_name"   : self.model.workflow_model.solvent_name,
                 })
 
         self.node = submit(builder)
