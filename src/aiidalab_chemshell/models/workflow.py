@@ -73,9 +73,14 @@ class ChemShellWorkflowModel(HasTraits):
     md_dryrunmd = Bool(False, allow_none=True)
     md_freeze_solute = Bool(True, allow_none=False)
 
-    qmmm_padding = Float(50.0, allow_none=True)
     qmmm_functional = Unicode("B3LYP", allow_none=True)
     qmmm_basis_set = Unicode("cc-pvdz", allow_none=True)
+    qmmm_use_dft = Bool(True, allow_none=True)
+    qmmm_shell_radius = Float(20.0, allow_none=True)
+    qmmm_active_region_radius = Float(12.0, allow_none=True)
+    qmmm_dryrun = Bool(False, allow_none=True)
+    qmmm_opt_cycles = Int(500, allow_none=True)
+    qmmm_energy_cycles = Int(200, allow_none=True)
 
     nw_dispersion = Unicode(allow_none=True)
     nw_tol_energy = Float(1.E-6, allow_none=True)

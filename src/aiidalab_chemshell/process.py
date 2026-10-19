@@ -482,12 +482,12 @@ class ChemShellProcess:
             "length_npt" : self.model.workflow_model.md_length_npt,
             "length_nvt" : self.model.workflow_model.md_length_nvt,
             "length_production" : self.model.workflow_model.md_length_production,
-	        "max_ncycles" : self.model.workflow_model.md_max_ncycles,
-            'minimisation_npt' :self.model.workflow_model.md_minimisation_npt,
-            'minimisation_nvt' : self.model.workflow_model.md_minimisation_nvt,
-            'solutes_dist' : self.model.workflow_model.md_solutes_dist,
-            'padding' : self.model.workflow_model.md_padding,
-            'nsnapshots' : self.model.workflow_model.md_nsnapshots,
+	    "max_ncycles" : self.model.workflow_model.md_max_ncycles,
+            "minimisation_npt" :self.model.workflow_model.md_minimisation_npt,
+            "minimisation_nvt" : self.model.workflow_model.md_minimisation_nvt,
+            "solutes_dist" : self.model.workflow_model.md_solutes_dist,
+            "padding" : self.model.workflow_model.md_padding,
+            "nsnapshots" : self.model.workflow_model.md_nsnapshots,
             "fixed_npt" : self.model.workflow_model.md_fixed_npt,
             "freeze_solute" : self.model.workflow_model.md_freeze_solute,
         })
@@ -499,15 +499,19 @@ class ChemShellProcess:
         builder.dryrunmd = self.model.workflow_model.md_dryrunmd
 
         qm_parameters ={
-                "method": "dft" if self.model.workflow_model.esp_use_dft else "hf",
+                "method": "dft" if self.model.workflow_model.qmmm_use_dft else "hf",
                 "functional": self.model.workflow_model.qmmm_functional,
                 "basis": self.model.workflow_model.qmmm_basis_set,
             }
 
         builder.qmmm_parameters = Dict({
             "qm_parameters" : qm_parameters,
-                "padding": self.model.workflow_model.qmmm_padding,
-                })
+            "radius_shell": self.model.workflow_model.qmmm_shell_radius,
+            "radius_active": self.model.workflow_model.qmmm_active_region_radius,
+            "dryrun_qmmm": self.model.workflow_model.qmmm_dryrun,
+            "opt_cycles": self.model.workflow_model.qmmm_opt_cycles,                 
+            "energy_cycles": self.model.workflow_model.qmmm_energy_cycles,                
+        })
 
         builder.solvent_parameters = Dict({
             "box_halflength"  : self.model.workflow_model.solvent_boxsize,

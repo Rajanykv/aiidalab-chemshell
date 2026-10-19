@@ -529,14 +529,33 @@ class SolvationWidget(ipw.VBox):
 
         self.md_container = ipw.VBox([self.temperature, self.rcut, self.length_npt, self.length_nvt, self.length_tot_run, self.length_ncycles, self.n_snapshots, self.n_minimise_nvt, self.n_minimise_npt, self.padding, self.fixed_nvt, self.fixed_npt])
 
-        self.qmmm_padding = ipw.FloatText(
+        self.shell_radius = ipw.FloatText(
             value =20.0,
-            description ="Padding",
+            description ="Radius of Shell",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
         )
-        link((self.model, "qmmm_padding"), (self.qmmm_padding, "value"))
+        link((self.model, "qmmm_shell_radius"), (self.shell_radius, "value"))
+
+        self.active_radius = ipw.FloatText(
+            value =12.0,
+            description ="Radius of Active region",
+            disabled = False,
+            layout = shared_layout,
+            style = shared_style,
+        )
+        link((self.model, "qmmm_active_region_radius"), (self.active_radius, "value"))
+
+        self.qmmm_method_dropdown = ipw.Dropdown(
+            options ={"DFT" : True, "HF" : False},
+            description ="SCF method:",
+            disabled = False,
+            layout = shared_layout,
+            style = shared_style,
+        )   
+        link((self.model, "qmmm_use_dft"), (self.qmmm_method_dropdown, "value"))
+
         self.qmmm_basis_string = ipw.Text(
             value ="",
             description ="Basis Set:",
@@ -554,7 +573,18 @@ class SolvationWidget(ipw.VBox):
         )
         link((self.model, "qmmm_functional"), (self.qmmm_functional, "value"))
 
-        self.qmmm_container = ipw.VBox([self.qmmm_padding, self.qmmm_basis_string, self.qmmm_functional])
+        self.qmmm_dryrun = ipw.Dropdown(
+            options = {"Full run" : False, "Initial setup" : True},
+            value = True,
+            description = "Choose Full-Run/Initialisation only",
+            disabled = False,
+            layout = shared_layout,
+            style = shared_style,
+        )
+        link((self.model, "qmmm_dryrun"), (self.qmmm_dryrun, "value"))
+
+        self.qmmm_container = ipw.VBox([self.qmmm_method_dropdown, self.qmmm_dryrun, self.qmmm_basis_string, self.qmmm_functional, self.shell_radius, self.active_radius])
+
         self.solvent_container = ipw.VBox([self.solventbox_dropdown, self.solventname_drop, self.solventbox_size])
 
         self._render_basic_options()
