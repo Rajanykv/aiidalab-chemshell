@@ -94,7 +94,7 @@ class SolvationWidget(ipw.VBox):
              </div>
              """
         )
-        self.dryrun_label = ipw.HTML(
+        self.solvation_label = ipw.HTML(
             value = f"""
             <div style ="{self.step_style.format(bg_color = "#2196F3")}">
             Step 2: Solvate in a Solvent of choice
@@ -113,9 +113,9 @@ class SolvationWidget(ipw.VBox):
             button_style ="primary",
             tooltip ="Submit the part of the calculation",
             icon ="check",
-            layout ={"width": "40%", "height": "30px", "margin": "30px auto 30px auto"},
-            #style ={"button_color": "#005A5B", "text_color": "white"}
-            style ={"button_color": "#5CB85C", "text_color": "white"}
+            layout ={"width": "30%", "height": "30px", "margin": "30px auto 30px auto"},
+            style ={"button_color": "#005A5B", "text_color": "white"}
+            #style ={"button_color": "#5CB85C", "text_color": "white"}
         )
         self.submit_dry_btn.on_click(self._submit_dry)
 
@@ -596,7 +596,7 @@ class SolvationWidget(ipw.VBox):
             self.opt_label,
             self.advanced_qm_options,
             self.basis_dropdown,
-            self.dryrun_label,
+            self.solvation_label,
             self.solvent_container,
             self.solvent_structfile,
             self.solventbox_view_select,
@@ -620,13 +620,13 @@ class SolvationWidget(ipw.VBox):
 
     def _render_advanced_options(self) -> None:
         """Render the advanced input options view."""
-        children = [self.header, self.opt_label, self.advanced_qm_options]
+        children = [self.header, self.opt_label, self.advanced_qm_options, self.basis_dropdown]
 
         if self.advanced_qm_options.value:
             children.append(self.qm_container)
 
         children.extend([
-            self.dryrun_label,
+            self.solvation_label,
             self.solvent_container,
             self.solvent_structfile,
             self.solventbox_view_select,
@@ -688,6 +688,7 @@ class SolvationWidget(ipw.VBox):
         if change["new"] == change["old"]:
             return
         self.model.basis_set = change["new"].label
+        self.model.functional = change["new"].functional
         return
 
     def _view_solventbox(self, change: dict) -> None:

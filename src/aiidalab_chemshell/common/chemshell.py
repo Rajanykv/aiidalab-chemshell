@@ -24,6 +24,17 @@ class BasisSetOptions(Enum):
             case "":
                 return ""
 
+    @property
+    def functional(self) -> str:
+        match self:
+            case BasisSetOptions.FAST:
+                return "BLYP"
+            case BasisSetOptions.BALANCED:
+                return "B3LYP"
+            case BasisSetOptions.QUALITY:
+                return "B3LYP"
+            case "":
+                return ""
 
 class WorkflowOptions(IntEnum):
     """Enum defining the available ChemShell based AiiDA workflows."""
