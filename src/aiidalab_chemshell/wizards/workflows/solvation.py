@@ -173,6 +173,8 @@ class SolvationWidget(ipw.VBox):
             layout = shared_layout,
             style = shared_style,
         )
+        self.basis_dropdown.observe(self._update_basis_set, "value")
+        #self.basis_dropdown.index = 1
 
         self.UPLOAD = tl.Instance(SinglefileData)
 
@@ -679,7 +681,7 @@ class SolvationWidget(ipw.VBox):
             else:
                 self._render_advanced_options()
             # Update the linked basis set value
-            self._update_basis_set({"new": self.basis_dropdown.value, "old": None})
+        self._update_basis_set({"new": self.basis_dropdown.value, "old": None})
         self._rendered = True
         return
 
