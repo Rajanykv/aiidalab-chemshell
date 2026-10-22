@@ -157,14 +157,33 @@ class SolvationWidget(ipw.VBox):
         self.advanced_esp_options.observe(self._render_options, names ="value")
 
         self.do_md_dryrun = ipw.Dropdown(
-            options = {"Full run" : False, "Initial setup" : True},
-            value = True,
-            description = "Choose Full-Run/Initialisation only",
+            options = {"Full run" : False, "Dry Run" : True},
+            value = False,
+            description = "Choose Full-Run/Dryrun",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
         )
         #link((self.model, "md_dryrunmd"), (self.do_md_dryrun, "value"))
+        self.do_opt_dryrun = ipw.Dropdown(
+            options = {"Full run" : False, "Dry Run" : True},
+            value = False,
+            description = "Choose Full-Run/Dryrun",
+            disabled = False,
+            layout = shared_layout,
+            style = shared_style,
+        )
+        link((self.model, "opt_dryrun"), (self.do_opt_dryrun, "value"))
+
+        self.do_charge_dryrun = ipw.Dropdown(
+            options = {"Do charge fit" : False, "Skip charge fit" : True},
+            value = False,
+            description = "Choose Full-Run/Dryrun",
+            disabled = False,
+            layout = shared_layout,
+            style = shared_style,
+        )
+        link((self.model, "charge_dryrun"), (self.do_charge_dryrun, "value"))
 
         self.basis_dropdown = ipw.Dropdown(
             options ={e.name: e for e in BasisSetOptions},
@@ -498,7 +517,7 @@ class SolvationWidget(ipw.VBox):
             layout = shared_layout,
             style = shared_style,
         )
-        link((self.model, "md_solutes_dist"), (self.solutes_dist, "value"))
+        #link((self.model, "md_solutes_dist"), (self.solutes_dist, "value"))
 
         self.padding = ipw.FloatText(
             value =20.0,
@@ -530,6 +549,7 @@ class SolvationWidget(ipw.VBox):
         self.esp_container = ipw.VBox([self.chargefit_npoints, self.chargefit_type, self.chargefit_tolerance, self.chargefit_vdw_scale, self.chargefit_nlayers])
 
         self.md_container = ipw.VBox([self.temperature, self.rcut, self.length_npt, self.length_nvt, self.length_tot_run, self.length_ncycles, self.n_snapshots, self.n_minimise_nvt, self.n_minimise_npt, self.padding, self.fixed_nvt, self.fixed_npt])
+        #self.md_container = ipw.VBox([self.temperature, self.rcut, self.length_npt, self.length_nvt, self.length_tot_run, self.n_snapshots, self.n_minimise_nvt, self.n_minimise_npt, self.padding, self.fixed_nvt, self.fixed_npt])
 
         self.shell_radius = ipw.FloatText(
             value =20.0,
@@ -555,7 +575,7 @@ class SolvationWidget(ipw.VBox):
             disabled = False,
             layout = shared_layout,
             style = shared_style,
-        )   
+        )
         link((self.model, "qmmm_use_dft"), (self.qmmm_method_dropdown, "value"))
 
         self.qmmm_basis_string = ipw.Text(
@@ -576,9 +596,9 @@ class SolvationWidget(ipw.VBox):
         link((self.model, "qmmm_functional"), (self.qmmm_functional, "value"))
 
         self.qmmm_dryrun = ipw.Dropdown(
-            options = {"Full run" : False, "Initial setup" : True},
+            options = {"Full run" : False, "Dry run" : True},
             value = True,
-            description = "Choose Full-Run/Initialisation only",
+            description = "Choose Full-Run/Dry Run",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -596,6 +616,7 @@ class SolvationWidget(ipw.VBox):
         children = [
             self.header,
             self.opt_label,
+            self.do_opt_dryrun,
             self.advanced_qm_options,
             self.basis_dropdown,
             self.solvation_label,
@@ -604,6 +625,7 @@ class SolvationWidget(ipw.VBox):
             self.solventbox_view_select,
             self.viewer,
             self.esp_label,
+            self.do_charge_dryrun,
             self.advanced_esp_options,
             self.esp_method_dropdown,
             self.esp_qm_options,
@@ -622,7 +644,7 @@ class SolvationWidget(ipw.VBox):
 
     def _render_advanced_options(self) -> None:
         """Render the advanced input options view."""
-        children = [self.header, self.opt_label, self.advanced_qm_options, self.basis_dropdown]
+        children = [self.header, self.opt_label, self.do_opt_dryrun, self.advanced_qm_options, self.basis_dropdown]
 
         if self.advanced_qm_options.value:
             children.append(self.qm_container)
@@ -634,7 +656,7 @@ class SolvationWidget(ipw.VBox):
             self.solventbox_view_select,
             self.viewer,
         ])
-        children.extend([self.esp_label, self.advanced_esp_options,
+        children.extend([self.esp_label, self.do_charge_dryrun, self.advanced_esp_options,
                         self.esp_method_dropdown])
 
         if self.advanced_esp_options.value:

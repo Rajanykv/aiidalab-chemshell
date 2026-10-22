@@ -444,6 +444,8 @@ class ChemShellProcess:
             "tot_num_mpiprocs": self.model.resource_model.ncpus,
         }
 
+        builder.dryrun_opt = self.model.workflow_model.opt_dryrun
+        builder.dryrun_charge = self.model.workflow_model.charge_dryrun
         builder.chargefitting_parameters = Dict({
             'method':self.model.workflow_model.chargefit_method,
             'npoints':self.model.workflow_model.chargefit_npoints,
@@ -482,14 +484,14 @@ class ChemShellProcess:
             "length_npt" : self.model.workflow_model.md_length_npt,
             "length_nvt" : self.model.workflow_model.md_length_nvt,
             "length_production" : self.model.workflow_model.md_length_production,
-	    "max_ncycles" : self.model.workflow_model.md_max_ncycles,
             "minimisation_npt" :self.model.workflow_model.md_minimisation_npt,
             "minimisation_nvt" : self.model.workflow_model.md_minimisation_nvt,
-            "solutes_dist" : self.model.workflow_model.md_solutes_dist,
             "padding" : self.model.workflow_model.md_padding,
             "nsnapshots" : self.model.workflow_model.md_nsnapshots,
             "fixed_npt" : self.model.workflow_model.md_fixed_npt,
             "freeze_solute" : self.model.workflow_model.md_freeze_solute,
+            #"solutes_dist" : self.model.workflow_model.md_solutes_dist,
+	    "max_ncycles" : self.model.workflow_model.md_max_ncycles,
         })
         if self.model.workflow_model.solvent_box:
             builder.solvent_box =  self.model.workflow_model.solvent_box
