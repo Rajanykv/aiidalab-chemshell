@@ -467,6 +467,9 @@ class ChemShellProcess:
             builder.chemsh.metadata.options.withmpi = (
                 self.model.resource_model.ncpus > 1
             )
+        import shutil
+        mpirun_path = shutil.which("mpirun")
+        builder.sysmpi = f"{mpirun_path}"
         mm_parameters = {
                     "theory": self.model.workflow_model.mm_theory,
                     "temperature" : self.model.workflow_model.md_temperature,
