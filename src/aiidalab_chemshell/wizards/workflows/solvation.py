@@ -134,12 +134,26 @@ class SolvationWidget(ipw.VBox):
         )
         self.esp_qm_options.observe(self._render_options, names ="value")
 
-        self.advanced_qmmm_options = ipw.Checkbox(
-            value = False, description="Show Advanced QMMM Options",
+        self.advanced_qmmm_qm_options = ipw.Checkbox(
+            value = False, description="Show Advanced QM Options for QMMM",
             layout = shared_layout2,
             style = shared_style2,
         )
-        self.advanced_qmmm_options.observe(self._render_options, names ="value")
+        self.advanced_qmmm_qm_options.observe(self._render_options, names ="value")
+
+        self.advanced_qmmm_mm_options = ipw.Checkbox(
+            value = False, description="Show Advanced MM Options for QMMM",
+            layout = shared_layout2,
+            style = shared_style2,
+        )
+        self.advanced_qmmm_mm_options.observe(self._render_options, names ="value")
+
+        self.advanced_md_mm_options = ipw.Checkbox(
+            value = False, description="Upload force field file for the solute?",
+            layout = shared_layout2,
+            style = shared_style2,
+        )
+        self.advanced_md_mm_options.observe(self._render_options, names ="value")
 
         self.advanced_md_options = ipw.Checkbox(
             value = False, description="Show Advanced MD Options",
@@ -348,16 +362,6 @@ class SolvationWidget(ipw.VBox):
 
         self.esp_qm_container = ipw.VBox([self.esp_qm_method_dropdown, self.esp_basis_string, self.esp_functional])
 
-        self.enable_mm_chk = ipw.Checkbox(
-            value = False, description="Use QM/MM",
-            layout = shared_layout2,
-            style = shared_style2,
-        )
-        self.enable_mm_chk.observe(self._render_options, names ="value")
-
-        self.advanced_qmmm_options.observe(self._render_options, names ="value")
-        ipw.dlink((self.enable_mm_chk, "value"), (self.model, "use_mm"))
-
         # MM Backend
         self.mm_theory_dropdown = ipw.Dropdown(
             options = self._get_mm_theory_options(),
@@ -369,10 +373,9 @@ class SolvationWidget(ipw.VBox):
          )
         ipw.dlink((self.mm_theory_dropdown, "value"), (self.model, "mm_theory"))
 
-
         # Force Field File
-        #self.ff_file = FileUploadWidget(description ="Force Field:")
-        #link((self.ff_file, "file"), (self.model, "force_field"))
+        self.ff_file = FileUploadWidget(description ="Force Field:")
+        link((self.ff_file, "file"), (self.model, "force_field"))
 
         self.esp_method_dropdown = ipw.Dropdown(
             options =["resp", "esp"],
@@ -605,7 +608,8 @@ class SolvationWidget(ipw.VBox):
         )
         link((self.model, "qmmm_dryrun"), (self.qmmm_dryrun, "value"))
 
-        self.qmmm_container = ipw.VBox([self.qmmm_method_dropdown, self.qmmm_dryrun, self.qmmm_basis_string, self.qmmm_functional, self.shell_radius, self.active_radius])
+        self.qmmm_qm_container = ipw.VBox([self.qmmm_method_dropdown, self.qmmm_basis_string, self.qmmm_functional, self.shell_radius, self.active_radius])
+        self.mm_container = ipw.VBox([self.ff_file])
 
         self.solvent_container = ipw.VBox([self.solventbox_dropdown, self.solventname_drop, self.solventbox_size])
 
@@ -632,13 +636,14 @@ class SolvationWidget(ipw.VBox):
             self.md_label,
             self.mm_theory_dropdown,
             self.advanced_md_options,
+            self.advanced_md_mm_options,
             self.submit_dry_btn,
             #self.do_md_dryrun,
             self.qmmm_label,
-            self.advanced_qmmm_options,
+            self.qmmm_dryrun,
+            self.advanced_qmmm_qm_options,
+            self.advanced_qmmm_mm_options,
         ]
-        if self.enable_mm_chk.value:
-            children.append(self.qm_region_text)
         self.children = children
         return
 
@@ -670,12 +675,20 @@ class SolvationWidget(ipw.VBox):
         children.append(self.mm_theory_dropdown)
         if self.advanced_md_options.value:
             children.append(self.md_container)
+        children.append(self.advanced_md_mm_options)
+        if self.advanced_md_mm_options.value:
+            children.append(self.mm_container)
         children.append(self.submit_dry_btn)
 
         children.append(self.qmmm_label)
-        children.append(self.advanced_qmmm_options)
-        if self.advanced_qmmm_options.value:
-            children.append(self.qmmm_container)
+        children.append(self.qmmm_dryrun)
+        children.append(self.advanced_qmmm_qm_options)
+        if self.advanced_qmmm_qm_options.value:
+            children.append(self.qmmm_qm_container)
+
+        children.append(self.advanced_qmmm_mm_options)
+        if self.advanced_qmmm_mm_options.value:
+            children.append(self.mm_container)
 
         self.children = children
 
