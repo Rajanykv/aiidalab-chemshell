@@ -515,6 +515,7 @@ class ChemShellProcess:
             "radius_shell": self.model.workflow_model.qmmm_shell_radius,
             "radius_active": self.model.workflow_model.qmmm_active_region_radius,
             "dryrun_qmmm": self.model.workflow_model.qmmm_dryrun,
+            "qmmm_opt": self.model.workflow_model.qmmm_opt,
             "opt_cycles": self.model.workflow_model.qmmm_opt_cycles,                 
             "energy_cycles": self.model.workflow_model.qmmm_energy_cycles,                
         })

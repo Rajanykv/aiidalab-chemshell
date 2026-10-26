@@ -149,7 +149,7 @@ class SolvationWidget(ipw.VBox):
         self.advanced_qmmm_mm_options.observe(self._render_options, names ="value")
 
         self.advanced_md_mm_options = ipw.Checkbox(
-            value = False, description="Upload force field file for the solute?",
+            value = False, description="(Optional) Upload force field file for the solute",
             layout = shared_layout2,
             style = shared_style2,
         )
@@ -608,6 +608,14 @@ class SolvationWidget(ipw.VBox):
         )
         link((self.model, "qmmm_dryrun"), (self.qmmm_dryrun, "value"))
 
+        self.qmmm_opt = ipw.Checkbox(
+            value = False,
+            description = "Do Optimisation",
+            layout = shared_layout2,
+            style = shared_style2,
+        )
+        link((self.model, "qmmm_opt"), (self.qmmm_opt, "value"))
+
         self.qmmm_qm_container = ipw.VBox([self.qmmm_method_dropdown, self.qmmm_basis_string, self.qmmm_functional, self.shell_radius, self.active_radius])
         self.mm_container = ipw.VBox([self.ff_file])
 
@@ -641,6 +649,7 @@ class SolvationWidget(ipw.VBox):
             #self.do_md_dryrun,
             self.qmmm_label,
             self.qmmm_dryrun,
+            self.qmmm_opt,
             self.advanced_qmmm_qm_options,
             self.advanced_qmmm_mm_options,
         ]
@@ -680,8 +689,7 @@ class SolvationWidget(ipw.VBox):
             children.append(self.mm_container)
         children.append(self.submit_dry_btn)
 
-        children.append(self.qmmm_label)
-        children.append(self.qmmm_dryrun)
+        children.extend([self.qmmm_label, self.qmmm_dryrun, self.qmmm_opt])
         children.append(self.advanced_qmmm_qm_options)
         if self.advanced_qmmm_qm_options.value:
             children.append(self.qmmm_qm_container)
