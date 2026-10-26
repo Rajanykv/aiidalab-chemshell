@@ -454,7 +454,7 @@ class ChemShellProcess:
             'nlayers':self.model.workflow_model.chargefit_nlayers,
             'tolerance':self.model.workflow_model.chargefit_tolerance,
         })
-        builder.esp_qm_parameters = Dict(
+        builder.qm_esp_parameters = Dict(
             {
                 "theory": self.model.workflow_model.qm_theory.name,
                 "method": "dft" if self.model.workflow_model.esp_use_dft else "hf",
