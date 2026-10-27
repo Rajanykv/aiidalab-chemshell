@@ -566,7 +566,7 @@ class SolvationWidget(ipw.VBox):
 
         self.esp_container = ipw.VBox([self.chargefit_npoints, self.chargefit_type, self.chargefit_tolerance, self.chargefit_vdw_scale, self.chargefit_nlayers])
 
-        self.md_container = ipw.VBox([self.temperature, self.rcut, self.length_npt, self.length_nvt, self.length_tot_run, self.minimisation_step, self.length_ncycles, self.n_snapshots, self.n_minimise_nvt, self.n_minimise_npt, self.padding, self.fixed_nvt, self.fixed_npt])
+        self.md_container = ipw.VBox([self.temperature, self.rcut, self.length_npt, self.length_nvt, self.n_minimise_nvt, self.n_minimise_npt, self.length_tot_run, self.minimisation_step, self.n_snapshots, self.padding, self.length_ncycles, self.fixed_nvt, self.fixed_npt])
         #self.md_container = ipw.VBox([self.temperature, self.rcut, self.length_npt, self.length_nvt, self.length_tot_run, self.n_snapshots, self.n_minimise_nvt, self.n_minimise_npt, self.padding, self.fixed_nvt, self.fixed_npt])
 
         self.shell_radius = ipw.FloatText(
