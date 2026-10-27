@@ -186,9 +186,9 @@ class SolvationWidget(ipw.VBox):
         )
         #link((self.model, "md_dryrunmd"), (self.do_md_dryrun, "value"))
         self.do_opt_dryrun = ipw.Dropdown(
-            options = {"Full run" : False, "Dry Run" : True},
+            options = {"Do Optimisation" : False, "Don't do optimisation" : True},
             value = False,
-            description = "Choose Full-Run/Dryrun",
+            description = "Choose to Optimise Solute",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -578,6 +578,16 @@ class SolvationWidget(ipw.VBox):
         )
         link((self.model, "qmmm_active_region_radius"), (self.active_radius, "value"))
 
+        self.qmmm_nsnapshots = ipw.IntText(
+            value = 0,
+            description ="Number of MD Snapshots to run QMMM",
+            disabled = False,
+            layout = shared_layout,
+            #style = shared_style,
+            style={"description_width": "initial"}
+        )
+        link((self.model, "qmmm_snapshots"), (self.qmmm_nsnapshots, "value"))
+
         self.qmmm_method_dropdown = ipw.Dropdown(
             options ={"DFT" : True, "HF" : False},
             description ="SCF method:",
@@ -623,7 +633,9 @@ class SolvationWidget(ipw.VBox):
         link((self.model, "qmmm_opt"), (self.qmmm_opt, "value"))
 
         self.qmmm_qm_container = ipw.VBox([self.qmmm_method_dropdown, self.qmmm_basis_string, self.qmmm_functional, ])
-        self.qmmm_container = ipw.VBox([ self.shell_radius, self.active_radius])
+        self.qmmm_adv_container = ipw.VBox([ self.shell_radius, self.active_radius,])
+
+        self.qmmm_container = ipw.VBox([self.qmmm_label, self.qmmm_dryrun, self.qmmm_opt, self.qmmm_nsnapshots, self.advanced_qmmm_options,])
 
         self.mm_container = ipw.VBox([self.ff_file])
 
@@ -655,10 +667,7 @@ class SolvationWidget(ipw.VBox):
             self.advanced_md_mm_options,
             self.submit_dry_btn,
             #self.do_md_dryrun,
-            self.qmmm_label,
-            self.qmmm_dryrun,
-            self.qmmm_opt,
-            self.advanced_qmmm_options,
+            self.qmmm_container,
             self.advanced_qmmm_qm_options,
             self.advanced_qmmm_mm_options,
         ]
@@ -698,9 +707,9 @@ class SolvationWidget(ipw.VBox):
             children.append(self.mm_container)
         children.append(self.submit_dry_btn)
 
-        children.extend([self.qmmm_label, self.qmmm_dryrun, self.qmmm_opt, self.advanced_qmmm_options,])
+        children.append(self.qmmm_container)
         if self.advanced_qmmm_options.value:
-            children.append(self.qmmm_container)
+            children.append(self.qmmm_adv_container)
         children.append(self.advanced_qmmm_qm_options)
         if self.advanced_qmmm_qm_options.value:
             children.append(self.qmmm_qm_container)

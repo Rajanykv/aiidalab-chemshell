@@ -82,6 +82,7 @@ class ChemShellWorkflowModel(HasTraits):
     qmmm_energy_cycles = Int(200, allow_none=True)
     qmmm_dryrun = Bool(False, allow_none=True)
     qmmm_opt = Bool(False, allow_none=True)
+    qmmm_snapshots = Int(0, allow_none=True)
 
     opt_dryrun = Bool(False, allow_none=True)
     charge_dryrun = Bool(False, allow_none=True)

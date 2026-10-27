@@ -518,6 +518,7 @@ class ChemShellProcess:
             "qmmm_opt": self.model.workflow_model.qmmm_opt,
             "opt_cycles": self.model.workflow_model.qmmm_opt_cycles,                 
             "energy_cycles": self.model.workflow_model.qmmm_energy_cycles,                
+            "nsnapshots" : self.model.workflow_model.qmmm_snapshots,
         })
 
         builder.solvent_parameters = Dict({
