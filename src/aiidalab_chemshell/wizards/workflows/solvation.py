@@ -226,7 +226,7 @@ class SolvationWidget(ipw.VBox):
             layout = shared_layout,
             style = shared_style,
         )
-        self.solventbox_dropdown.index = 0
+        self.solventbox_dropdown.index = 3
         self.model.solvent_box = SinglefileData(file = self.solventbox_dropdown.value)
         self.solventbox_dropdown.observe(self._update_solventbox_set, names ="value")
 
@@ -256,7 +256,7 @@ class SolvationWidget(ipw.VBox):
             options = self.boxlength_options,
             ensure_option=False,
             placeholder='Type Length',
-            value= "30",
+            value= "40",
             disabled = False,
             description ="Half Side-length",
             layout = shared_layout,
@@ -278,7 +278,7 @@ class SolvationWidget(ipw.VBox):
             options = self.name_options,
             ensure_option=False,
             placeholder='Type name',
-            value= "water",
+            value= "chloroform",
             disabled = False,
             description ="Solvent Name",
             layout = shared_layout,
