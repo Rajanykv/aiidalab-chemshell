@@ -456,6 +456,15 @@ class SolvationWidget(ipw.VBox):
         )
         link((self.model, "md_temperature"), (self.temperature, "value"))
 
+        self.minimisation_step = ipw.FloatText(
+            value= 1.0, step= 0.5,
+            description = "Minimisation Step Size",
+            disabled = False,
+            layout = shared_layout,
+            style = shared_style,
+        )
+        link((self.model, "md_minimise_step"), (self.minimisation_step, "value"))
+
         self.length_npt = ipw.IntText(
             value =5,
             description ="N Steps for NPT",
@@ -476,7 +485,7 @@ class SolvationWidget(ipw.VBox):
 
         self.length_tot_run = ipw.IntText(
             value =100,
-            description ="N Steps for Total Run",
+            description ="N Steps for Production Run",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -557,7 +566,7 @@ class SolvationWidget(ipw.VBox):
 
         self.esp_container = ipw.VBox([self.chargefit_npoints, self.chargefit_type, self.chargefit_tolerance, self.chargefit_vdw_scale, self.chargefit_nlayers])
 
-        self.md_container = ipw.VBox([self.temperature, self.rcut, self.length_npt, self.length_nvt, self.length_tot_run, self.length_ncycles, self.n_snapshots, self.n_minimise_nvt, self.n_minimise_npt, self.padding, self.fixed_nvt, self.fixed_npt])
+        self.md_container = ipw.VBox([self.temperature, self.rcut, self.length_npt, self.length_nvt, self.length_tot_run, self.minimisation_step, self.length_ncycles, self.n_snapshots, self.n_minimise_nvt, self.n_minimise_npt, self.padding, self.fixed_nvt, self.fixed_npt])
         #self.md_container = ipw.VBox([self.temperature, self.rcut, self.length_npt, self.length_nvt, self.length_tot_run, self.n_snapshots, self.n_minimise_nvt, self.n_minimise_npt, self.padding, self.fixed_nvt, self.fixed_npt])
 
         self.shell_radius = ipw.FloatText(
@@ -578,15 +587,21 @@ class SolvationWidget(ipw.VBox):
         )
         link((self.model, "qmmm_active_region_radius"), (self.active_radius, "value"))
 
+        self.snap_label = ipw.Label(value="Number of MD Snapshots to run QMMM for, Leave 0 for all snapshots",
+        )
         self.qmmm_nsnapshots = ipw.IntText(
             value = 0,
-            description ="Number of MD Snapshots to run QMMM",
             disabled = False,
-            layout = shared_layout,
+            layout=ipw.Layout(width="80px", margin = "0px 0px 0px 5px"),
+            #layout = shared_layout,
             #style = shared_style,
-            style={"description_width": "initial"}
+            #style={"description_width": "initial"}
         )
         link((self.model, "qmmm_snapshots"), (self.qmmm_nsnapshots, "value"))
+
+        self.snapshot_box = ipw.HBox([self.snap_label, self.qmmm_nsnapshots],
+          layout=ipw.Layout(align_items="center", margin="0px 0px 0px 100px")
+        )
 
         self.qmmm_method_dropdown = ipw.Dropdown(
             options ={"DFT" : True, "HF" : False},
@@ -635,7 +650,7 @@ class SolvationWidget(ipw.VBox):
         self.qmmm_qm_container = ipw.VBox([self.qmmm_method_dropdown, self.qmmm_basis_string, self.qmmm_functional, ])
         self.qmmm_adv_container = ipw.VBox([ self.shell_radius, self.active_radius,])
 
-        self.qmmm_container = ipw.VBox([self.qmmm_label, self.qmmm_dryrun, self.qmmm_opt, self.qmmm_nsnapshots, self.advanced_qmmm_options,])
+        self.qmmm_container = ipw.VBox([self.qmmm_label, self.qmmm_dryrun, self.qmmm_opt, self.snapshot_box, self.advanced_qmmm_options,])
 
         self.mm_container = ipw.VBox([self.ff_file])
 

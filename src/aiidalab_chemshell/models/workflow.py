@@ -57,6 +57,7 @@ class ChemShellWorkflowModel(HasTraits):
     solvent_boxsize = Int(40, allow_none=True)
 
     md_temperature = Float(300.0, allow_none=True)
+    md_minimise_step = Float(1.0, allow_none=False)
     md_rcut = Float(-1.0, allow_none=True)
     #md_rcut = Float(allow_none=True)
     md_length_npt = Int(20, allow_none=False)

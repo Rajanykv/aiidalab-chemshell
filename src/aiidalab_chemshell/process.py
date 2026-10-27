@@ -484,11 +484,16 @@ class ChemShellProcess:
         builder.mm_parameters = Dict(mm_parameters)
 
         builder.md_parameters = Dict({
-            "length_npt" : self.model.workflow_model.md_length_npt,
-            "length_nvt" : self.model.workflow_model.md_length_nvt,
-            "length_production" : self.model.workflow_model.md_length_production,
-            "minimisation_npt" :self.model.workflow_model.md_minimisation_npt,
-            "minimisation_nvt" : self.model.workflow_model.md_minimisation_nvt,
+           'npt' : {"length" : self.model.workflow_model.md_length_npt,
+                    "minimisation" :self.model.workflow_model.md_minimisation_npt,
+                   },
+            "nvt" : { "length" : self.model.workflow_model.md_length_nvt,
+                      "minimisation" : self.model.workflow_model.md_minimisation_nvt,
+                   },
+            "production" : { "length" : self.model.workflow_model.md_length_production,
+                   },
+            "minimise" : {'stepsize': self.model.workflow_model.md_minimise_step,
+                   },
             "padding" : self.model.workflow_model.md_padding,
             "nsnapshots" : self.model.workflow_model.md_nsnapshots,
             "fixed_npt" : self.model.workflow_model.md_fixed_npt,
