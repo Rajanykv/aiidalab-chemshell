@@ -109,10 +109,9 @@ class SolvationWidget(ipw.VBox):
              """
         )
         self.submit_dry_btn = ipw.Button(
-            description ="Submit Trial run for inspection",
+            description ="Submit a Dry Run of MD",
             button_style ="primary",
             tooltip ="Submit the part of the calculation",
-            icon ="check",
             layout ={"width": "30%", "height": "30px", "margin": "30px auto 30px auto"},
             style ={"button_color": "#005A5B", "text_color": "white"}
             #style ={"button_color": "#5CB85C", "text_color": "white"}
@@ -140,6 +139,13 @@ class SolvationWidget(ipw.VBox):
             style = shared_style2,
         )
         self.advanced_qmmm_qm_options.observe(self._render_options, names ="value")
+
+        self.advanced_qmmm_options = ipw.Checkbox(
+            value = False, description="Show Advanced QMMM Options",
+            layout = shared_layout2,
+            style = shared_style2,
+        )
+        self.advanced_qmmm_options.observe(self._render_options, names ="value")
 
         self.advanced_qmmm_mm_options = ipw.Checkbox(
             value = False, description="Show Advanced MM Options for QMMM",
@@ -616,7 +622,9 @@ class SolvationWidget(ipw.VBox):
         )
         link((self.model, "qmmm_opt"), (self.qmmm_opt, "value"))
 
-        self.qmmm_qm_container = ipw.VBox([self.qmmm_method_dropdown, self.qmmm_basis_string, self.qmmm_functional, self.shell_radius, self.active_radius])
+        self.qmmm_qm_container = ipw.VBox([self.qmmm_method_dropdown, self.qmmm_basis_string, self.qmmm_functional, ])
+        self.qmmm_container = ipw.VBox([ self.shell_radius, self.active_radius])
+
         self.mm_container = ipw.VBox([self.ff_file])
 
         self.solvent_container = ipw.VBox([self.solventbox_dropdown, self.solventname_drop, self.solventbox_size])
@@ -650,6 +658,7 @@ class SolvationWidget(ipw.VBox):
             self.qmmm_label,
             self.qmmm_dryrun,
             self.qmmm_opt,
+            self.advanced_qmmm_options,
             self.advanced_qmmm_qm_options,
             self.advanced_qmmm_mm_options,
         ]
@@ -689,7 +698,9 @@ class SolvationWidget(ipw.VBox):
             children.append(self.mm_container)
         children.append(self.submit_dry_btn)
 
-        children.extend([self.qmmm_label, self.qmmm_dryrun, self.qmmm_opt])
+        children.extend([self.qmmm_label, self.qmmm_dryrun, self.qmmm_opt, self.advanced_qmmm_options,])
+        if self.advanced_qmmm_options.value:
+            children.append(self.qmmm_container)
         children.append(self.advanced_qmmm_qm_options)
         if self.advanced_qmmm_qm_options.value:
             children.append(self.qmmm_qm_container)
@@ -812,9 +823,9 @@ class SolvationWidget(ipw.VBox):
                     widget.style.text_color = "grey"
             if widget is self.submit_dry_btn:
               if widget.disabled:
-                  self.submit_dry_btn.description = "Submitted Trial run for inspection"
+                  self.submit_dry_btn.description = "Submitted MD Dry run"
               else:
-                  self.submit_dry_btn.description = "Submit Trial run for inspection"
+                  self.submit_dry_btn.description = "Submit a Dry Run of MD"
             if hasattr(widget, "children"):
                 for child in widget.children:
                     _toggle(child)
