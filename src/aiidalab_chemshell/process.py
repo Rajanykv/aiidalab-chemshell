@@ -499,7 +499,7 @@ class ChemShellProcess:
         if self.model.workflow_model.solvent_box:
             builder.solvent_box =  self.model.workflow_model.solvent_box
         else:
-            builder.solvent_box =  SinglefileData(file = SolventBoxOptions.WATER40.value)
+            builder.solvent_box =  SinglefileData(file = SolventBoxOptions.CHLOROFORM40.value)
 
         builder.dryrunmd = self.model.workflow_model.md_dryrunmd
 
