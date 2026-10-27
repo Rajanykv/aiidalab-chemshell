@@ -496,10 +496,10 @@ class ChemShellProcess:
                    },
             "padding" : self.model.workflow_model.md_padding,
             "nsnapshots" : self.model.workflow_model.md_nsnapshots,
-            "fixed_npt" : self.model.workflow_model.md_fixed_npt,
             "freeze_solute" : self.model.workflow_model.md_freeze_solute,
             #"solutes_dist" : self.model.workflow_model.md_solutes_dist,
-	    "max_ncycles" : self.model.workflow_model.md_max_ncycles,
+	    #"max_ncycles" : self.model.workflow_model.md_max_ncycles,
+            #"fixed_npt" : self.model.workflow_model.md_fixed_npt,
         })
         if self.model.workflow_model.solvent_box:
             builder.solvent_box =  self.model.workflow_model.solvent_box
