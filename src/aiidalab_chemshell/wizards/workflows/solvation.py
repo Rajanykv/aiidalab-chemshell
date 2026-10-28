@@ -655,11 +655,31 @@ class SolvationWidget(ipw.VBox):
             style = shared_style2,
         )
         link((self.model, "qmmm_opt"), (self.qmmm_opt, "value"))
+        self.qmmm_opt.observe(self._render_input_options, names ="value")
 
+        self.qmmm_opt_cycles = ipw.IntText(
+            value =500,
+            description ="Num of Optimisation cycles:",
+            disabled = False,
+            layout = shared_layout,
+            style = shared_style,
+        )
+        link((self.model, "qmmm_opt_cycles"), (self.qmmm_opt_cycles, "value"))
+
+        self.qmmm_energy_cycles = ipw.IntText(
+            value =500,
+            description ="Num of Energy cycles in Opt:",
+            disabled = False,
+            layout = shared_layout,
+            style = shared_style,
+        )
+        link((self.model, "qmmm_energy_cycles"), (self.qmmm_energy_cycles, "value"))
+
+        self.qmmm_opt_container = ipw.VBox([ self.qmmm_opt_cycles, self.qmmm_energy_cycles,])
         self.qmmm_qm_container = ipw.VBox([self.qmmm_method_dropdown, self.qmmm_basis_string, self.qmmm_functional, self.multiplicity, self.dispersion, self.energy_tol])
         self.qmmm_adv_container = ipw.VBox([ self.shell_radius, self.active_radius,])
 
-        self.qmmm_container = ipw.VBox([self.qmmm_label, self.qmmm_dryrun, self.qmmm_opt, self.snapshot_box, self.advanced_qmmm_options,])
+        self.qmmm_container = ipw.VBox([self.qmmm_label, self.qmmm_dryrun, self.snapshot_box, self.qmmm_opt, self.advanced_qmmm_options,])
 
         self.mm_container = ipw.VBox([self.mm_theory_dropdown])
 
@@ -732,6 +752,8 @@ class SolvationWidget(ipw.VBox):
         children.append(self.submit_dry_btn)
 
         children.append(self.qmmm_container)
+        if self.qmmm_opt.value:
+            children.append(self.qmmm_opt_container)
         if self.advanced_qmmm_options.value:
             children.append(self.qmmm_adv_container)
         children.append(self.advanced_qmmm_qm_options)

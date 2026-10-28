@@ -80,7 +80,7 @@ class ChemShellWorkflowModel(HasTraits):
     qmmm_shell_radius = Float(20.0, allow_none=True)
     qmmm_active_region_radius = Float(12.0, allow_none=True)
     qmmm_opt_cycles = Int(500, allow_none=True)
-    qmmm_energy_cycles = Int(200, allow_none=True)
+    qmmm_energy_cycles = Int(500, allow_none=True)
     qmmm_dryrun = Bool(False, allow_none=True)
     qmmm_opt = Bool(False, allow_none=False)
     qmmm_snapshots = Int(0, allow_none=True)
