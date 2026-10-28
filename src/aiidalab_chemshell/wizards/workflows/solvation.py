@@ -746,7 +746,7 @@ class SolvationWidget(ipw.VBox):
             children.append(self.md_container)
         children.append(self.advanced_md_mm_options)
         if self.advanced_md_mm_options.value:
-            children.append(self.mm_container)
+            children.append(self.ff_file)
         children.append(self.submit_md_dry_btn)
 
         children.append(self.qmmm_container)
