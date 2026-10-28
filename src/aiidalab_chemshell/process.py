@@ -418,12 +418,13 @@ class ChemShellProcess:
 
     def _submit_solvation_workflow(self) -> None:
         """Submit the Solvation WorkChain."""
-        builder = WorkflowFactory("chemshell.solvation").get_builder()  # pyright: ignore[reportFunctionMemberAccess]
+        builder = WorkflowFactory("chemshell.solvation").get_builder()
         builder.code = load_code(self.model.resource_model.code_label)
         if self.model.structure_model.has_file:
             builder.structure = self.model.structure_model.structure_file
         else:
             builder.structure = self.model.structure_model.structure
+
         qm_parameters = {
                 "theory": self.model.workflow_model.qm_theory.name,
                 "method": "dft" if self.model.workflow_model.use_dft else "hf",
@@ -448,6 +449,7 @@ class ChemShellProcess:
 
         builder.dryrun_opt = self.model.workflow_model.opt_dryrun
         builder.dryrun_charge = self.model.workflow_model.charge_dryrun
+
         builder.chargefitting_parameters = Dict({
             'method':self.model.workflow_model.chargefit_method,
             'npoints':self.model.workflow_model.chargefit_npoints,
@@ -469,13 +471,16 @@ class ChemShellProcess:
             builder.chemsh.metadata.options.withmpi = (
                 self.model.resource_model.ncpus > 1
             )
+
         import shutil
         mpirun_path = shutil.which("mpirun")
         builder.sysmpi = f"{mpirun_path}"
+
         mm_parameters = {
                     "theory": self.model.workflow_model.mm_theory,
                     "temperature" : self.model.workflow_model.md_temperature,
         }
+
         if self.model.workflow_model.mm_theory.lower() == "dl_poly":
             if self.model.workflow_model.md_rcut > 0.0:
                 mm_parameters.update( {"rcut" : self.model.workflow_model.md_rcut} )
@@ -488,7 +493,7 @@ class ChemShellProcess:
         builder.mm_parameters = Dict(mm_parameters)
 
         builder.md_parameters = Dict({
-           'npt' : {"length" : self.model.workflow_model.md_length_npt,
+            "npt" : {"length" : self.model.workflow_model.md_length_npt,
                     "minimisation" :self.model.workflow_model.md_minimisation_npt,
                    },
             "nvt" : { "length" : self.model.workflow_model.md_length_nvt,
@@ -504,13 +509,19 @@ class ChemShellProcess:
             #"solutes_dist" : self.model.workflow_model.md_solutes_dist,
 	    #"max_ncycles" : self.model.workflow_model.md_max_ncycles,
             #"fixed_npt" : self.model.workflow_model.md_fixed_npt,
+            #"fixed_nvt" : self.model.workflow_model.md_fixed_nvt,
         })
+        builder.dryrunmd = self.model.workflow_model.md_dryrunmd
+
         if self.model.workflow_model.solvent_box:
             builder.solvent_box =  self.model.workflow_model.solvent_box
         else:
             builder.solvent_box =  SinglefileData(file = SolventBoxOptions.CHLOROFORM40.value)
 
-        builder.dryrunmd = self.model.workflow_model.md_dryrunmd
+        builder.solvent_parameters = Dict({
+            "box_halflength"  : self.model.workflow_model.solvent_boxsize,
+            "solvent_name"   : self.model.workflow_model.solvent_name,
+                })
 
         qm_parameters ={
                 "theory": self.model.workflow_model.qm_theory.name,
@@ -525,15 +536,10 @@ class ChemShellProcess:
             "radius_active": self.model.workflow_model.qmmm_active_region_radius,
             "dryrun_qmmm": self.model.workflow_model.qmmm_dryrun,
             "qmmm_opt": self.model.workflow_model.qmmm_opt,
-            "opt_cycles": self.model.workflow_model.qmmm_opt_cycles,                 
-            "energy_cycles": self.model.workflow_model.qmmm_energy_cycles,                
+            "opt_cycles": self.model.workflow_model.qmmm_opt_cycles,
+            "energy_cycles": self.model.workflow_model.qmmm_energy_cycles,
             "nsnapshots" : self.model.workflow_model.qmmm_snapshots,
         })
-
-        builder.solvent_parameters = Dict({
-            "box_halflength"  : self.model.workflow_model.solvent_boxsize,
-            "solvent_name"   : self.model.workflow_model.solvent_name,
-                })
 
         self.node = submit(builder)
         self.node.label = self.model.resource_model.process_label
