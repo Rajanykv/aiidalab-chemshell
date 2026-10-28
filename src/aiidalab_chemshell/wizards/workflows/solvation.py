@@ -108,15 +108,15 @@ class SolvationWidget(ipw.VBox):
              </div>
              """
         )
-        self.submit_dry_btn = ipw.Button(
+        self.submit_md_dry_btn = ipw.Button(
             description ="Submit a Dry Run of MD",
             button_style ="primary",
-            tooltip ="Submit the part of the calculation",
+            tooltip ="Submit the initialisation of MD calculation",
             layout ={"width": "30%", "height": "30px", "margin": "30px auto 30px auto"},
             style ={"button_color": "#005A5B", "text_color": "white"}
             #style ={"button_color": "#5CB85C", "text_color": "white"}
         )
-        self.submit_dry_btn.on_click(self._submit_dry)
+        self.submit_md_dry_btn.on_click(self._submit_md_dry)
 
         self.advanced_qm_options = ipw.Checkbox(
             value = False, description="Show Advanced QM Options",
@@ -576,7 +576,6 @@ class SolvationWidget(ipw.VBox):
         self.esp_container = ipw.VBox([self.chargefit_npoints, self.chargefit_type, self.chargefit_tolerance, self.chargefit_vdw_scale, self.chargefit_nlayers])
 
         self.md_container = ipw.VBox([self.temperature, self.rcut, self.length_npt, self.length_nvt, self.n_minimise_nvt, self.n_minimise_npt, self.length_tot_run, self.minimisation_step, self.n_snapshots, self.padding, self.length_ncycles, self.fixed_nvt, self.fixed_npt])
-        #self.md_container = ipw.VBox([self.temperature, self.rcut, self.length_npt, self.length_nvt, self.length_tot_run, self.n_snapshots, self.n_minimise_nvt, self.n_minimise_npt, self.padding, self.fixed_nvt, self.fixed_npt])
 
         self.shell_radius = ipw.FloatText(
             value =20.0,
@@ -602,14 +601,12 @@ class SolvationWidget(ipw.VBox):
             value = 0,
             disabled = False,
             layout=ipw.Layout(width="80px", margin = "0px 0px 0px 5px"),
-            #layout = shared_layout,
-            #style = shared_style,
             #style={"description_width": "initial"}
         )
         link((self.model, "qmmm_snapshots"), (self.qmmm_nsnapshots, "value"))
 
         self.snapshot_box = ipw.HBox([self.snap_label, self.qmmm_nsnapshots],
-          layout=ipw.Layout(align_items="center", margin="0px 0px 0px 100px")
+          layout=ipw.Layout(align_items="center", margin="0px 0px 0px 85px")
         )
 
         self.qmmm_method_dropdown = ipw.Dropdown(
@@ -677,6 +674,7 @@ class SolvationWidget(ipw.VBox):
 
         self.qmmm_opt_container = ipw.VBox([ self.qmmm_opt_cycles, self.qmmm_energy_cycles,])
         self.qmmm_qm_container = ipw.VBox([self.qmmm_method_dropdown, self.qmmm_basis_string, self.qmmm_functional, self.multiplicity, self.dispersion, self.energy_tol])
+
         self.qmmm_adv_container = ipw.VBox([ self.shell_radius, self.active_radius,])
 
         self.qmmm_container = ipw.VBox([self.qmmm_label, self.qmmm_dryrun, self.snapshot_box, self.qmmm_opt, self.advanced_qmmm_options,])
@@ -709,7 +707,7 @@ class SolvationWidget(ipw.VBox):
             self.mm_theory_dropdown,
             self.advanced_md_options,
             self.advanced_md_mm_options,
-            self.submit_dry_btn,
+            self.submit_md_dry_btn,
             #self.do_md_dryrun,
             self.qmmm_container,
             self.advanced_qmmm_qm_options,
@@ -749,7 +747,7 @@ class SolvationWidget(ipw.VBox):
         children.append(self.advanced_md_mm_options)
         if self.advanced_md_mm_options.value:
             children.append(self.mm_container)
-        children.append(self.submit_dry_btn)
+        children.append(self.submit_md_dry_btn)
 
         children.append(self.qmmm_container)
         if self.qmmm_opt.value:
@@ -876,23 +874,18 @@ class SolvationWidget(ipw.VBox):
             elif hasattr(widget, "style"):
                 if disabled and hasattr(widget.style, "text_color"):
                     widget.style.text_color = "grey"
-            if widget is self.submit_dry_btn:
+            if widget is self.submit_md_dry_btn:
               if widget.disabled:
-                  self.submit_dry_btn.description = "Submitted MD Dry run"
+                  self.submit_md_dry_btn.description = "Submitted MD Dry run"
               else:
-                  self.submit_dry_btn.description = "Submit a Dry Run of MD"
+                  self.submit_md_dry_btn.description = "Submit a Dry Run of MD"
             if hasattr(widget, "children"):
                 for child in widget.children:
                     _toggle(child)
         _toggle(self)
         return
 
-    def _submit_dry(self,_):
+    def _submit_md_dry(self,_):
         self.disable(True)
         self.model.md_dryrunmd = True
 
-#    def disable(self, disable: bool = True) -> None:
-#        """Disable/Enable the wigets input options."""
-#        for child in self.children:
-#            child.disabled = disable
-#        return
