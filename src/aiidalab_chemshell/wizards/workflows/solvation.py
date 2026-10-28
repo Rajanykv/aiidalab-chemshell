@@ -162,7 +162,7 @@ class SolvationWidget(ipw.VBox):
         self.advanced_md_mm_options.observe(self._render_options, names ="value")
 
         self.advanced_md_options = ipw.Checkbox(
-            value = False, description="Show Advanced MD Options",
+            value = False, description="Show All MD Options",
             layout = shared_layout2,
             style = shared_style2,
         )
@@ -652,7 +652,7 @@ class SolvationWidget(ipw.VBox):
 
         self.qmmm_container = ipw.VBox([self.qmmm_label, self.qmmm_dryrun, self.qmmm_opt, self.snapshot_box, self.advanced_qmmm_options,])
 
-        self.mm_container = ipw.VBox([self.ff_file])
+        self.mm_container = ipw.VBox([self.mm_theory_dropdown])
 
         self.solvent_container = ipw.VBox([self.solventbox_dropdown, self.solventname_drop, self.solventbox_size])
 
