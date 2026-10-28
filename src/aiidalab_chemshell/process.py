@@ -477,8 +477,10 @@ class ChemShellProcess:
         if self.model.workflow_model.mm_theory.lower() == "dl_poly":
             if self.model.workflow_model.md_rcut > 0.0:
                 mm_parameters.update( {"rcut" : self.model.workflow_model.md_rcut} )
-        if self.model.workflow_model.solvent_ff:
-            builder.force_field_file = self.model.workflow_model.solvent_ff
+        #if self.model.workflow_model.solvent_ff:
+        #    builder.force_field_file = self.model.workflow_model.solvent_ff
+        if self.model.workflow_model.force_field:
+            builder.force_field_file = self.model.workflow_model.force_field
         else:
             mm_parameters.update({"ff" : "charmm"})
         builder.mm_parameters = Dict(mm_parameters)
