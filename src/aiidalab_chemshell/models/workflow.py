@@ -90,6 +90,7 @@ class ChemShellWorkflowModel(HasTraits):
 
     nw_dispersion = Unicode(allow_none=True)
     nw_tol_energy = Float(1.E-6, allow_none=True)
+    qm_spin_mult = Int(1, allow_none=True)
 
     @property
     def has_box(self) -> bool:

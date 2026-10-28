@@ -435,6 +435,8 @@ class ChemShellProcess:
                 qm_parameters.update({"dispersion" : self.model.workflow_model.nw_dispersion})
             if self.model.workflow_model.nw_tol_energy:
                 qm_parameters.update({"tol_energy" : self.model.workflow_model.nw_tol_energy})
+            if self.model.workflow_model.qm_spin_mult:
+                qm_parameters.update({"mult" : self.model.workflow_model.qm_spin_mult})
         builder.qm_parameters = Dict(qm_parameters)
 
         builder.chemsh.metadata.options.resources = {

@@ -331,6 +331,15 @@ class SolvationWidget(ipw.VBox):
         )
         link((self.model, "nw_dispersion"), (self.dispersion, "value"))
 
+        self.multiplicity = ipw.IntText(
+            value =1,
+            description ="Spin multiplicity:",
+            disabled = False,
+            layout = shared_layout,
+            style = shared_style,
+        )
+        link((self.model, "qm_spin_mult"), (self.multiplicity, "value"))
+
         self.energy_tol = ipw.FloatText(
             description ="Energy Tolerance:",
             disabled = False,
@@ -339,7 +348,7 @@ class SolvationWidget(ipw.VBox):
         )
         link((self.model, "nw_tol_energy"), (self.energy_tol, "value"))
 
-        self.qm_container = ipw.VBox([self.backend, self.qm_method_dropdown, self.basis_string, self.functional, self.dispersion, self.energy_tol])
+        self.qm_container = ipw.VBox([self.backend, self.qm_method_dropdown, self.basis_string, self.functional, self.multiplicity, self.dispersion, self.energy_tol])
 
         self.esp_basis_string = ipw.Text(
             value ="",
@@ -366,7 +375,7 @@ class SolvationWidget(ipw.VBox):
         )
         link((self.model, "esp_use_dft"), (self.esp_qm_method_dropdown, "value"))
 
-        self.esp_qm_container = ipw.VBox([self.esp_qm_method_dropdown, self.esp_basis_string, self.esp_functional])
+        self.esp_qm_container = ipw.VBox([self.esp_qm_method_dropdown, self.esp_basis_string, self.esp_functional, self.multiplicity, self.dispersion, self.energy_tol])
 
         # MM Backend
         self.mm_theory_dropdown = ipw.Dropdown(
@@ -647,7 +656,7 @@ class SolvationWidget(ipw.VBox):
         )
         link((self.model, "qmmm_opt"), (self.qmmm_opt, "value"))
 
-        self.qmmm_qm_container = ipw.VBox([self.qmmm_method_dropdown, self.qmmm_basis_string, self.qmmm_functional, ])
+        self.qmmm_qm_container = ipw.VBox([self.qmmm_method_dropdown, self.qmmm_basis_string, self.qmmm_functional, self.multiplicity, self.dispersion, self.energy_tol])
         self.qmmm_adv_container = ipw.VBox([ self.shell_radius, self.active_radius,])
 
         self.qmmm_container = ipw.VBox([self.qmmm_label, self.qmmm_dryrun, self.qmmm_opt, self.snapshot_box, self.advanced_qmmm_options,])
