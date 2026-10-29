@@ -257,7 +257,7 @@ class SolvationWidget(ipw.VBox):
             placeholder='Type Length',
             value= "40",
             disabled = False,
-            description ="Half Side-length",
+            description ="Half Side-length(A)",
             layout = shared_layout,
             style = shared_style,
         )
@@ -340,7 +340,7 @@ class SolvationWidget(ipw.VBox):
         link((self.model, "qm_spin_mult"), (self.multiplicity, "value"))
 
         self.energy_tol = ipw.FloatText(
-            description ="Energy Tolerance:",
+            description ="Energy Tolerance(unit):",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -421,7 +421,7 @@ class SolvationWidget(ipw.VBox):
 
         self.chargefit_tolerance = ipw.FloatText(
             value =1e-12,
-            description ="Tolerance",
+            description ="Tolerance(unit)",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -448,7 +448,7 @@ class SolvationWidget(ipw.VBox):
 
         self.rcut = ipw.Combobox(
             value ="Default",
-            description ="Rcut",
+            description ="Rcut(unit)",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -463,7 +463,7 @@ class SolvationWidget(ipw.VBox):
 
         self.temperature = ipw.FloatText(
             value =300.0,
-            description ="Temperature",
+            description ="Temperature(K)",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -472,7 +472,7 @@ class SolvationWidget(ipw.VBox):
 
         self.minimisation_step = ipw.FloatText(
             value= 1.0, step= 0.5,
-            description = "Minimisation Step Size",
+            description = "Minimisation Step Size(fs)",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -481,7 +481,7 @@ class SolvationWidget(ipw.VBox):
 
         self.length_npt = ipw.IntText(
             value =5,
-            description ="N Steps for NPT",
+            description ="NPT Duration(fs)",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -490,7 +490,7 @@ class SolvationWidget(ipw.VBox):
 
         self.length_nvt = ipw.IntText(
             value =5,
-            description ="N Steps for NVT",
+            description ="NVT Duration(fs)",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -499,7 +499,7 @@ class SolvationWidget(ipw.VBox):
 
         self.length_tot_run = ipw.IntText(
             value =100,
-            description ="N Steps for Production Run",
+            description ="Production Run Duration(fs)",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -517,7 +517,7 @@ class SolvationWidget(ipw.VBox):
 
         self.n_minimise_npt = ipw.IntText(
             value =10,
-            description ="N Steps NPT minimisation",
+            description ="NPT minimise duration(fs)",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -526,7 +526,7 @@ class SolvationWidget(ipw.VBox):
 
         self.n_minimise_nvt = ipw.IntText(
             value =10,
-            description ="N Steps NVT minimisation",
+            description ="NVT minimise durtion(fs)",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -544,7 +544,7 @@ class SolvationWidget(ipw.VBox):
 
         self.solutes_dist = ipw.FloatText(
             value =20.0,
-            description ="Solutes distance",
+            description ="Solutes distance(unit)",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -553,7 +553,7 @@ class SolvationWidget(ipw.VBox):
 
         self.padding = ipw.FloatText(
             value =20.0,
-            description ="Padding",
+            description ="Padding(Ang)",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -584,7 +584,7 @@ class SolvationWidget(ipw.VBox):
 
         self.shell_radius = ipw.FloatText(
             value =20.0,
-            description ="Radius of Shell",
+            description ="Radius of Shell(unit)",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -593,7 +593,7 @@ class SolvationWidget(ipw.VBox):
 
         self.active_radius = ipw.FloatText(
             value =12.0,
-            description ="Radius of Active region",
+            description ="Radius of Active region(unit)",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -892,4 +892,3 @@ class SolvationWidget(ipw.VBox):
     def _submit_md_dry(self,_):
         self.disable(True)
         self.model.md_dryrunmd = True
-
