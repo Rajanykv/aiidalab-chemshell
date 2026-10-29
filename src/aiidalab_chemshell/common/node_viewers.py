@@ -4,9 +4,12 @@ import aiidalab_widgets_base as awb
 import ipywidgets as ipw
 from aiida.common.links import LinkType
 from aiida.orm import ArrayData, Node, ProcessNode, List
+from aiida.orm import FolderData, StructureData
 from alc_aiidalab_widgets.viewers import ALC_AIIDA_VIEWER_MAPPING
 from IPython.display import clear_output, display
 from traitlets import Instance, observe
+from aiidalab_widgets_base.viewers import FolderDataViewer
+from alc_aiidalab_widgets.widgets import StructureViewWidget
 
 
 class CustomAiidaNodeViewWidget(ipw.VBox):
@@ -89,6 +92,8 @@ class CustomAiidaNodeViewWidget(ipw.VBox):
                 elif link_name == "fitted_charges":
                    _viewer = FittedChargesViewWidget
                    #return f"Fitted Charges: {node.get_list()}"
+                elif link_name == "snapshots":
+                   _viewer = SnapshotsViewWidget
         if _viewer:
             return _viewer(node, **kwargs)
         # No viewer registered for this type, return node itself
@@ -155,3 +160,25 @@ class FittedChargesViewWidget(ipw.VBox):
         html += "</table>"
         self.children = [ipw.HTML(html)]
         return
+class SnapshotsViewWidget(FolderDataViewer):
+
+    """Custom widget to display Snapshots produced from ChemShell."""
+    """ modified from FolderDataViewer """
+
+    def change_file_view(self, _=None):
+        try:
+            with self._folder.base.repository.open(self.files.value) as fobj:
+                if not self.files.value.endswith("xyz"):
+                    self.text.value = fobj.read()
+                else:
+                    with self._folder.base.repository.as_path(self.files.value) as filepath:
+                        from ase import io
+                        atoms = io.read(filepath)
+                        structure_node = StructureData(ase=atoms)
+                    self.structview = StructureViewWidget(structure_node,
+                           layout={"margin": "auto"},)
+                    self.files.unobserve(self.change_file_view, names="value")
+                    self.children = list(self.children) + [self.structview]
+                    self.files.observe(self.change_file_view, names="value")
+        except UnicodeDecodeError:
+            self.text.value = "[Binary file, preview not available]"
