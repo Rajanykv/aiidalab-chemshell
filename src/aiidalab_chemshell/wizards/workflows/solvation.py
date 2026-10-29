@@ -215,7 +215,8 @@ class SolvationWidget(ipw.VBox):
 
         self.UPLOAD = tl.Instance(SinglefileData)
 
-        box_options = [(b.properties.label,b.properties.filepath) for b in SolventBoxOptions] +[("Upload new Box", self.UPLOAD)]
+        #box_options = [(b.properties.label,b.properties.filepath) for b in SolventBoxOptions] +[("Upload new Box", self.UPLOAD)]
+        box_options = [b.properties.label for b in SolventBoxOptions] +["Upload new Box"]
 
         self.solventbox_dropdown = ipw.Dropdown(
             options = box_options,
@@ -225,7 +226,7 @@ class SolvationWidget(ipw.VBox):
             style = shared_style,
         )
         self.solventbox_dropdown.index = 3
-        self.model.solvent_box = SinglefileData(file = self.solventbox_dropdown.value)
+        #self.model.solvent_box = SinglefileData(file = self.solventbox_dropdown.value)
         self.solventbox_dropdown.observe(self._update_solventbox_set, names ="value")
 
         self.solventbox_view_select = ipw.Checkbox(
@@ -700,8 +701,8 @@ class SolvationWidget(ipw.VBox):
             self.solvation_label,
             self.solvent_container,
             self.solvent_structfile,
-            self.solventbox_view_select,
-            self.viewer,
+            #self.solventbox_view_select,
+            #self.viewer,
             self.esp_label,
             self.do_charge_dryrun,
             self.advanced_esp_options,
@@ -731,8 +732,8 @@ class SolvationWidget(ipw.VBox):
             self.solvation_label,
             self.solvent_container,
             self.solvent_structfile,
-            self.solventbox_view_select,
-            self.viewer,
+            #self.solventbox_view_select,
+            #self.viewer,
         ])
         children.extend([self.esp_label, self.do_charge_dryrun, self.advanced_esp_options,
                         self.esp_method_dropdown])
@@ -858,15 +859,14 @@ class SolvationWidget(ipw.VBox):
             if change["new"] is self.UPLOAD:
                 self.solvent_structfile.layout.display="flex"
             else:
-                self.model.solvent_box = SinglefileData(file = change["new"])
+                #self.model.solvent_box = SinglefileData(file = change["new"])
                 self.solvent_structfile.layout.display="none"
-
                 #self.solventname_drop.index = self.solventbox_dropdown.index
                 #self.solventbox_size.index = self.solventbox_dropdown.index
                 self.solventbox_size.value = str(self.boxlength_options[self.solventbox_dropdown.index])
+                self.model.solvent_boxsize= int(self.solventbox_size.value)
                 self.solventname_drop.value = self.name_options[self.solventbox_dropdown.index]
                 self.model.solvent_name = self.solventname_drop.value
-                self.model.solvent_boxsize= int(self.solventbox_size.value)
             return
 
     def disable(self, disabled: bool = True) -> None:
