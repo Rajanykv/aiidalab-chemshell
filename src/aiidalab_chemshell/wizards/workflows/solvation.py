@@ -340,7 +340,7 @@ class SolvationWidget(ipw.VBox):
         link((self.model, "qm_spin_mult"), (self.multiplicity, "value"))
 
         self.energy_tol = ipw.FloatText(
-            description ="Energy Tolerance(unit):",
+            description ="Energy Tolerance( a.u. ):",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -421,7 +421,7 @@ class SolvationWidget(ipw.VBox):
 
         self.chargefit_tolerance = ipw.FloatText(
             value =1e-12,
-            description ="Tolerance(unit)",
+            description ="Tolerance( a.u. )",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -448,7 +448,7 @@ class SolvationWidget(ipw.VBox):
 
         self.rcut = ipw.Combobox(
             value ="Default",
-            description ="Rcut(unit)",
+            description ="Rcut( Bohr )",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -463,7 +463,7 @@ class SolvationWidget(ipw.VBox):
 
         self.temperature = ipw.FloatText(
             value =300.0,
-            description ="Temperature(K)",
+            description ="Temperature( K )",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -472,7 +472,7 @@ class SolvationWidget(ipw.VBox):
 
         self.minimisation_step = ipw.FloatText(
             value= 1.0, step= 0.5,
-            description = "Minimisation Step Size(fs)",
+            description = "Minimisation Step Size( Fs )",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -481,7 +481,7 @@ class SolvationWidget(ipw.VBox):
 
         self.length_npt = ipw.IntText(
             value =5,
-            description ="NPT Duration(fs)",
+            description ="NPT Duration( Fs )",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -490,7 +490,7 @@ class SolvationWidget(ipw.VBox):
 
         self.length_nvt = ipw.IntText(
             value =5,
-            description ="NVT Duration(fs)",
+            description ="NVT Duration( Fs )",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -499,7 +499,7 @@ class SolvationWidget(ipw.VBox):
 
         self.length_tot_run = ipw.IntText(
             value =100,
-            description ="Production Run Duration(fs)",
+            description ="Production Run Duration( Fs )",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -517,7 +517,7 @@ class SolvationWidget(ipw.VBox):
 
         self.n_minimise_npt = ipw.IntText(
             value =10,
-            description ="NPT minimise duration(fs)",
+            description ="NPT minimise duration( Fs )",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -526,7 +526,7 @@ class SolvationWidget(ipw.VBox):
 
         self.n_minimise_nvt = ipw.IntText(
             value =10,
-            description ="NVT minimise durtion(fs)",
+            description ="NVT minimise durtion( Fs )",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -544,7 +544,7 @@ class SolvationWidget(ipw.VBox):
 
         self.solutes_dist = ipw.FloatText(
             value =20.0,
-            description ="Solutes distance(unit)",
+            description ="Solutes distance( Bohr )",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -553,7 +553,7 @@ class SolvationWidget(ipw.VBox):
 
         self.padding = ipw.FloatText(
             value =20.0,
-            description ="Padding(Ang)",
+            description ="Padding( Bohr )",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -584,7 +584,7 @@ class SolvationWidget(ipw.VBox):
 
         self.shell_radius = ipw.FloatText(
             value =20.0,
-            description ="Radius of Shell(unit)",
+            description ="Radius of Shell( Bohr )",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -593,7 +593,7 @@ class SolvationWidget(ipw.VBox):
 
         self.active_radius = ipw.FloatText(
             value =12.0,
-            description ="Radius of Active region(unit)",
+            description ="Radius of Active region( Bohr )",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
