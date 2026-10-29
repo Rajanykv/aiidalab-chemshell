@@ -164,21 +164,21 @@ class SnapshotsViewWidget(FolderDataViewer):
 
     """Custom widget to display Snapshots produced from ChemShell."""
     """ modified from FolderDataViewer """
-
     def change_file_view(self, _=None):
+        from ase import io
         try:
             with self._folder.base.repository.open(self.files.value) as fobj:
                 if not self.files.value.endswith("xyz"):
                     self.text.value = fobj.read()
+                    self.children = [self.files, self.text]
                 else:
                     with self._folder.base.repository.as_path(self.files.value) as filepath:
-                        from ase import io
                         atoms = io.read(filepath)
                         structure_node = StructureData(ase=atoms)
-                    self.structview = StructureViewWidget(structure_node,
+                        self.structview = StructureViewWidget(structure_node,
                            layout={"margin": "auto"},)
-                    self.files.unobserve(self.change_file_view, names="value")
-                    self.children = list(self.children) + [self.structview]
-                    self.files.observe(self.change_file_view, names="value")
+                    #self.files.unobserve(self.change_file_view, names="value")
+                    self.children = [self.files,self.structview]
+                    #self.files.observe(self.change_file_view, names="value")
         except UnicodeDecodeError:
             self.text.value = "[Binary file, preview not available]"
