@@ -185,25 +185,23 @@ class SolvationWidget(ipw.VBox):
             style = shared_style,
         )
         #link((self.model, "md_dryrunmd"), (self.do_md_dryrun, "value"))
-        self.do_opt_dryrun = ipw.Dropdown(
-            options = {"Do Optimisation" : False, "Don't do optimisation" : True},
-            value = False,
-            description = "Choose to Optimise Solute",
+        self.do_opt_dryrun = ipw.Checkbox(
+            value = True,
+            description = "Optimise Solute",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
         )
-        link((self.model, "opt_dryrun"), (self.do_opt_dryrun, "value"))
+        link((self.model, "opt_dryrun"), (self.do_opt_dryrun, "value"),  transform=(lambda x: not x, lambda x: not x))
 
-        self.do_charge_dryrun = ipw.Dropdown(
-            options = {"Do charge fit" : False, "Skip charge fit" : True},
-            value = False,
-            description = "Choose Full-Run/Dryrun",
+        self.do_charge_dryrun = ipw.Checkbox(
+            description ="Do Charge Fitting",
+            value = True,
             disabled = False,
             layout = shared_layout,
             style = shared_style,
         )
-        link((self.model, "charge_dryrun"), (self.do_charge_dryrun, "value"))
+        link((self.model, "charge_dryrun"), (self.do_charge_dryrun, "value"), transform=(lambda x: not x, lambda x: not x))
 
         self.basis_dropdown = ipw.Dropdown(
             options ={e.name: e for e in BasisSetOptions},
