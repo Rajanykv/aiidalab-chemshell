@@ -445,14 +445,20 @@ class SolvationWidget(ipw.VBox):
         )
         link((self.model, "chargefit_nlayers"), (self.chargefit_nlayers, "value"))
 
-        self.rcut = ipw.FloatText(
-            value =20.0,
+        self.rcut = ipw.Combobox(
+            value ="Default",
             description ="Rcut",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
         )
-        link((self.model, "md_rcut"), (self.rcut, "value"))
+        #link((self.model, "md_rcut"), (self.rcut, "value"))
+        def _rcut_update(change):
+            if change["new"] == "Default":
+                self.model.md_rcut = -1
+            else:
+                self.model.md_rcut = float(change["new"])
+        self.rcut.observe(_rcut_update, names="value")
 
         self.temperature = ipw.FloatText(
             value =300.0,
