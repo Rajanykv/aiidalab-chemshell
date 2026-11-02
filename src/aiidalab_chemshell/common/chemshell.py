@@ -102,7 +102,7 @@ class SolventBoxOptions(Enum):
         match self:
             case SolventBoxOptions.WATER40:
                 #return Props(dataroot/"water-box40-100ns.pqr", "Water Box 40A cube", 40, "water")
-                return Props("Water Box 220A cube", 220, "water")
+                return Props("Water Box 220A cube", 220, "tip3p")
             case SolventBoxOptions.HEPTANE40:
                 return Props("Heptane Box 40A cube", 40, "heptane")
             case SolventBoxOptions.METHANOL40:
