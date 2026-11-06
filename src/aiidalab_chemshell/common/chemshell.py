@@ -92,22 +92,22 @@ class SolventBoxOptions(Enum):
 
     #_ignore_ = 'dataroot'
 
-    WATER40 =  0
-    HEPTANE40 = auto()
-    METHANOL40 = auto()
-    CHLOROFORM40 = auto()
+    WATER80 =  0
+    HEPTANE80 = auto()
+    METHANOL80 = auto()
+    CHLOROFORM80 = auto()
 
     @property
     def properties(self) -> tuple :
         match self:
-            case SolventBoxOptions.WATER40:
-                #return Props(dataroot/"water-box40-100ns.pqr", "Water Box 40A cube", 40, "water")
+            case SolventBoxOptions.WATER80:
+                #return Props(dataroot/"water-box80-100ns.pqr", "Water Box 80A cube", 80, "water")
                 return Props("Water Box 220A cube", 220, "water")
-            case SolventBoxOptions.HEPTANE40:
-                return Props("Heptane Box 40A cube", 40, "heptane")
-            case SolventBoxOptions.METHANOL40:
-                return Props("Methanol Box 40A cube", 40, "methanol")
-            case SolventBoxOptions.CHLOROFORM40:
-                return Props("Chloroform 40A cube", 40, "chloroform")
+            case SolventBoxOptions.HEPTANE80:
+                return Props("Heptane Box 80A cube", 80, "heptane")
+            case SolventBoxOptions.METHANOL80:
+                return Props("Methanol Box 80A cube", 80, "methanol")
+            case SolventBoxOptions.CHLOROFORM80:
+                return Props("Chloroform 80A cube", 80, "chloroform")
             case _:
                 return Props("Select",0,"Select")

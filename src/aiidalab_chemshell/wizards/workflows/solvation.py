@@ -6,7 +6,6 @@ import traitlets as tl
 from aiida_chemshell.utils import ChemShellQMTheory
 from alc_aiidalab_widgets.widgets import (
     FileUploadWidget,
-    StructureViewWidget,
 )
 
 from traitlets import Bool, HasTraits, link
@@ -15,6 +14,7 @@ from aiida.orm import SinglefileData
 from aiidalab_chemshell.common.chemshell import BasisSetOptions
 from aiidalab_chemshell.common.chemshell import SolventBoxOptions
 from aiidalab_chemshell.common.utils import LoadingWidget
+from aiidalab_chemshell.common.node_viewers import NewStructureViewWidget
 from aiidalab_chemshell.models.workflow import ChemShellWorkflowModel
 
 class SolvationWidget(ipw.VBox):
@@ -56,6 +56,7 @@ class SolvationWidget(ipw.VBox):
 
         shared_layout = ipw.Layout(width ='50%', margin='5px')
         shared_layout2 = ipw.Layout(width ='500px', margin='5px')
+        shared_layout3 = ipw.Layout(width ='500px', margin='5px 0px 0px 100px')
         shared_style = {'description_width': '50%'}
         shared_style2 = {'description_width': '100px'}
 
@@ -104,15 +105,15 @@ class SolvationWidget(ipw.VBox):
         self.qmmm_label = ipw.HTML(
             value = f"""
             <div style ="{self.step_style.format(bg_color = "#2196F3")}">
-            Step 3: Run QM/MM
+            Step 3: Prepare QM/MM clusters from MD snapshots
              </div>
              """
         )
         self.submit_md_dry_btn = ipw.Button(
-            description ="Submit a Dry Run of MD",
+            description ="(Optional) Solvate and submit MD Dry-Run",
             button_style ="primary",
             tooltip ="Submit the initialisation of MD calculation",
-            layout ={"width": "30%", "height": "30px", "margin": "30px auto 30px auto"},
+            layout ={"width": "40%", "height": "30px", "margin": "30px auto 30px auto"},
             style ={"button_color": "#005A5B", "text_color": "white"}
             #style ={"button_color": "#5CB85C", "text_color": "white"}
         )
@@ -138,10 +139,9 @@ class SolvationWidget(ipw.VBox):
             layout = shared_layout2,
             style = shared_style2,
         )
-        self.advanced_qmmm_qm_options.observe(self._render_options, names ="value")
 
         self.advanced_qmmm_options = ipw.Checkbox(
-            value = False, description="Show Advanced QMMM Options",
+            value = False, description="Show Advanced Options",
             layout = shared_layout2,
             style = shared_style2,
         )
@@ -152,7 +152,6 @@ class SolvationWidget(ipw.VBox):
             layout = shared_layout2,
             style = shared_style2,
         )
-        self.advanced_qmmm_mm_options.observe(self._render_options, names ="value")
 
         self.advanced_md_mm_options = ipw.Checkbox(
             value = False, description="(Optional) Upload force field file for the solute",
@@ -193,15 +192,6 @@ class SolvationWidget(ipw.VBox):
             style = shared_style,
         )
         link((self.model, "opt_dryrun"), (self.do_opt_dryrun, "value"),  transform=(lambda x: not x, lambda x: not x))
-
-        self.do_charge_dryrun = ipw.Checkbox(
-            description ="Do Charge Fitting",
-            value = True,
-            disabled = False,
-            layout = shared_layout,
-            style = shared_style,
-        )
-        link((self.model, "charge_dryrun"), (self.do_charge_dryrun, "value"), transform=(lambda x: not x, lambda x: not x))
 
         self.basis_dropdown = ipw.Dropdown(
             options ={e.name: e for e in BasisSetOptions},
@@ -304,7 +294,7 @@ class SolvationWidget(ipw.VBox):
         link((self.model, "basis_set"), (self.basis_string, "value"))
 
         self.backend = ipw.Dropdown(
-            options ={e.name: e for e in ChemShellQMTheory},
+            options ={e.name: e for e in ChemShellQMTheory if e.name=="NWCHEM"},
             description ="QM Backend:",
             disabled = False,
             layout = shared_layout,
@@ -378,7 +368,8 @@ class SolvationWidget(ipw.VBox):
 
         # MM Backend
         self.mm_theory_dropdown = ipw.Dropdown(
-            options = self._get_mm_theory_options(),
+            #options = self._get_mm_theory_options(),
+            options = ["DL_POLY"],
             value = "DL_POLY",
             description ="MM Theory:",
             disabled = False,
@@ -544,7 +535,7 @@ class SolvationWidget(ipw.VBox):
 
         self.solutes_dist = ipw.FloatText(
             value =20.0,
-            description ="Solutes distance( Bohr )",
+            description ="Solutes distance( Angstrom )",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -553,7 +544,7 @@ class SolvationWidget(ipw.VBox):
 
         self.padding = ipw.FloatText(
             value =20.0,
-            description ="Padding( Bohr )",
+            description ="Padding( Angstrom )",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -567,7 +558,7 @@ class SolvationWidget(ipw.VBox):
             layout = shared_layout,
             style = shared_style,
         )
-        link((self.model, "md_fixed_npt"), (self.fixed_npt, "value"))
+        #link((self.model, "md_fixed_npt"), (self.fixed_npt, "value"))
 
         self.fixed_nvt = ipw.Text(
             value ='',
@@ -576,31 +567,31 @@ class SolvationWidget(ipw.VBox):
             layout = shared_layout,
             style = shared_style,
         )
-        link((self.model, "md_fixed_nvt"), (self.fixed_nvt, "value"))
+        #link((self.model, "md_fixed_nvt"), (self.fixed_nvt, "value"))
 
         self.esp_container = ipw.VBox([self.chargefit_npoints, self.chargefit_type, self.chargefit_tolerance, self.chargefit_vdw_scale, self.chargefit_nlayers])
 
-        self.md_container = ipw.VBox([self.temperature, self.rcut, self.length_npt, self.length_nvt, self.n_minimise_nvt, self.n_minimise_npt, self.length_tot_run, self.minimisation_step, self.n_snapshots, self.padding, self.length_ncycles, self.fixed_nvt, self.fixed_npt])
+        self.md_container = ipw.VBox([self.temperature, self.length_npt, self.length_nvt, self.n_minimise_nvt, self.n_minimise_npt, self.length_tot_run, self.minimisation_step, self.n_snapshots, self.padding, self.rcut, self.length_ncycles])
 
         self.shell_radius = ipw.FloatText(
             value =20.0,
-            description ="Radius of Shell( Bohr )",
+            description ="Radius of the Cluster( Angstrom )",
             disabled = False,
-            layout = shared_layout,
+            layout = shared_layout3,
             style = shared_style,
         )
         link((self.model, "qmmm_shell_radius"), (self.shell_radius, "value"))
 
         self.active_radius = ipw.FloatText(
             value =12.0,
-            description ="Radius of Active region( Bohr )",
+            description ="Radius of Active region( Angstrom )",
             disabled = False,
-            layout = shared_layout,
+            layout = shared_layout3,
             style = shared_style,
         )
         link((self.model, "qmmm_active_region_radius"), (self.active_radius, "value"))
 
-        self.snap_label = ipw.Label(value="Number of MD Snapshots to run QMMM for, Leave 0 for all snapshots",
+        self.snap_label = ipw.Label(value="Number of Snapshots to prepare, Leave 0 for all snapshots",
         )
         self.qmmm_nsnapshots = ipw.IntText(
             value = 0,
@@ -611,7 +602,7 @@ class SolvationWidget(ipw.VBox):
         link((self.model, "qmmm_snapshots"), (self.qmmm_nsnapshots, "value"))
 
         self.snapshot_box = ipw.HBox([self.snap_label, self.qmmm_nsnapshots],
-          layout=ipw.Layout(align_items="center", margin="0px 0px 0px 85px")
+          layout=ipw.Layout(align_items="center", margin="0px 0px 0px 150px")
         )
 
         self.qmmm_method_dropdown = ipw.Dropdown(
@@ -640,11 +631,9 @@ class SolvationWidget(ipw.VBox):
         )
         link((self.model, "qmmm_functional"), (self.qmmm_functional, "value"))
 
-        self.qmmm_dryrun = ipw.Dropdown(
-            options = {"Full run" : False, "Dry run" : True},
-            value = True,
-            description = "Choose Full-Run/Dry Run",
-            disabled = False,
+        self.qmmm_dryrun = ipw.Checkbox(
+            value = False,
+            description = "Skip this Step",
             layout = shared_layout,
             style = shared_style,
         )
@@ -680,13 +669,13 @@ class SolvationWidget(ipw.VBox):
         self.qmmm_opt_container = ipw.VBox([ self.qmmm_opt_cycles, self.qmmm_energy_cycles,])
         self.qmmm_qm_container = ipw.VBox([self.qmmm_method_dropdown, self.qmmm_basis_string, self.qmmm_functional, self.multiplicity, self.dispersion, self.energy_tol])
 
-        self.qmmm_adv_container = ipw.VBox([ self.shell_radius, self.active_radius,])
+        self.qmmm_adv_container = ipw.VBox([ self.shell_radius,])
 
-        self.qmmm_container = ipw.VBox([self.qmmm_label, self.qmmm_dryrun, self.snapshot_box, self.qmmm_opt, self.advanced_qmmm_options,])
+        self.qmmm_container = ipw.VBox([self.qmmm_label, self.qmmm_dryrun, self.snapshot_box, self.advanced_qmmm_options,])
 
         self.mm_container = ipw.VBox([self.mm_theory_dropdown])
 
-        self.solvent_container = ipw.VBox([self.solventbox_dropdown, self.solventname_drop, self.solventbox_size])
+        self.solvent_container = ipw.VBox([self.solventbox_dropdown])
 
         self._render_basic_options()
 
@@ -704,7 +693,6 @@ class SolvationWidget(ipw.VBox):
             #self.solventbox_view_select,
             #self.viewer,
             self.esp_label,
-            self.do_charge_dryrun,
             self.advanced_esp_options,
             self.esp_method_dropdown,
             self.esp_qm_options,
@@ -713,10 +701,7 @@ class SolvationWidget(ipw.VBox):
             self.advanced_md_options,
             self.advanced_md_mm_options,
             self.submit_md_dry_btn,
-            #self.do_md_dryrun,
             self.qmmm_container,
-            self.advanced_qmmm_qm_options,
-            self.advanced_qmmm_mm_options,
         ]
         self.children = children
         return
@@ -735,7 +720,7 @@ class SolvationWidget(ipw.VBox):
             #self.solventbox_view_select,
             #self.viewer,
         ])
-        children.extend([self.esp_label, self.do_charge_dryrun, self.advanced_esp_options,
+        children.extend([self.esp_label, self.advanced_esp_options,
                         self.esp_method_dropdown])
 
         if self.advanced_esp_options.value:
@@ -759,13 +744,6 @@ class SolvationWidget(ipw.VBox):
             children.append(self.qmmm_opt_container)
         if self.advanced_qmmm_options.value:
             children.append(self.qmmm_adv_container)
-        children.append(self.advanced_qmmm_qm_options)
-        if self.advanced_qmmm_qm_options.value:
-            children.append(self.qmmm_qm_container)
-
-        children.append(self.advanced_qmmm_mm_options)
-        if self.advanced_qmmm_mm_options.value:
-            children.append(self.mm_container)
 
         self.children = children
 
@@ -808,7 +786,7 @@ class SolvationWidget(ipw.VBox):
     def _view_solventbox(self, change: dict) -> None:
         if change["new"]:
             file_to_view = self._convert_fileformat(self.model.solvent_box)
-            self.viewer = StructureViewWidget(file_to_view)
+            self.viewer = NewStructureViewWidget(file_to_view)
         else:
             self.viewer = self.basic_view
         self._render_basic_options()
@@ -880,9 +858,9 @@ class SolvationWidget(ipw.VBox):
                     widget.style.text_color = "grey"
             if widget is self.submit_md_dry_btn:
               if widget.disabled:
-                  self.submit_md_dry_btn.description = "Submitted MD Dry run"
+                  self.submit_md_dry_btn.description = "Submitted MD"
               else:
-                  self.submit_md_dry_btn.description = "Submit a Dry Run of MD"
+                  self.submit_md_dry_btn.description = "(Optional) Solvate and submit MD Dry-Run"
             if hasattr(widget, "children"):
                 for child in widget.children:
                     _toggle(child)

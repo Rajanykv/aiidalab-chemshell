@@ -48,7 +48,7 @@ class ChemShellWorkflowModel(HasTraits):
     chargefit_tolerance = Float(1e-10, allow_none=False)
     esp_use_dft = Bool(False).tag(sync=True)
     esp_functional = Unicode("B3LYP", allow_none=False)
-    esp_basis_set = Unicode("cc-pvdz", allow_none=False)
+    esp_basis_set = Unicode("6-31g*", allow_none=False)
 
     default_guide = ""
 
@@ -67,7 +67,7 @@ class ChemShellWorkflowModel(HasTraits):
     md_minimisation_npt = Int(20, allow_none=False)
     md_minimisation_nvt = Int(20, allow_none=False)
     #md_solutes_dist = Float(3.0, allow_none=False)
-    md_padding = Float(40.0, allow_none=False)
+    md_padding = Float(20.0, allow_none=False)
     md_nsnapshots = Int(3, allow_none=False)
     md_fixed_npt  = Unicode("", allow_none=True)
     md_fixed_nvt  = Unicode("", allow_none=True)

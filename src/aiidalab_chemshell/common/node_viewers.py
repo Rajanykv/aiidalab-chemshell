@@ -95,6 +95,8 @@ class CustomAiidaNodeViewWidget(ipw.VBox):
                 elif link_name == "snapshots":
                    _viewer = SnapshotsViewWidget
         if _viewer:
+            if _viewer == StructureViewWidget:
+               _viewer = NewStructureViewWidget
             return _viewer(node, **kwargs)
         # No viewer registered for this type, return node itself
         return node
@@ -170,15 +172,26 @@ class SnapshotsViewWidget(FolderDataViewer):
             with self._folder.base.repository.open(self.files.value) as fobj:
                 if not self.files.value.endswith("xyz"):
                     self.text.value = fobj.read()
-                    self.children = [self.files, self.text]
+                    children = [self.files, self.text]
                 else:
                     with self._folder.base.repository.as_path(self.files.value) as filepath:
                         atoms = io.read(filepath)
                         structure_node = StructureData(ase=atoms)
-                        self.structview = StructureViewWidget(structure_node,
+                        self.structview = NewStructureViewWidget(structure_node,
                            layout={"margin": "auto"},)
                     #self.files.unobserve(self.change_file_view, names="value")
-                    self.children = [self.files,self.structview]
+                    children = [self.files,self.structview]
                     #self.files.observe(self.change_file_view, names="value")
+                if hasattr(self, 'download_btn') and self.download_btn is not None:
+                    children.append(self.download_btn)
+                self.children=children
         except UnicodeDecodeError:
             self.text.value = "[Binary file, preview not available]"
+
+class NewStructureViewWidget(StructureViewWidget):
+    from ase import Atoms
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if hasattr(self, "viewer") and hasattr(self.viewer, "avr") and self.viewer.avr is not None:
+            self.viewer.avr.model_style = 1
+            self.viewer.avr.color_type = "CPK"
