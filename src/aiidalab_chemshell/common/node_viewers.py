@@ -4,12 +4,13 @@ import aiidalab_widgets_base as awb
 import ipywidgets as ipw
 from aiida.common.links import LinkType
 from aiida.orm import ArrayData, Node, ProcessNode, List
-from aiida.orm import FolderData, StructureData
+from aiida.orm import FolderData, StructureData, SinglefileData
 from alc_aiidalab_widgets.viewers import ALC_AIIDA_VIEWER_MAPPING
 from IPython.display import clear_output, display
 from traitlets import Instance, observe
 from aiidalab_widgets_base.viewers import FolderDataViewer
 from alc_aiidalab_widgets.widgets import StructureViewWidget
+from alc_aiidalab_widgets.widgets.file_viewer import SinglefileDataViewer
 
 
 class CustomAiidaNodeViewWidget(ipw.VBox):
@@ -97,6 +98,8 @@ class CustomAiidaNodeViewWidget(ipw.VBox):
         if _viewer:
             if _viewer == StructureViewWidget:
                _viewer = NewStructureViewWidget
+            if _viewer == SinglefileDataViewer:
+               _viewer = NewSinglefileDataViewer
             return _viewer(node, **kwargs)
         # No viewer registered for this type, return node itself
         return node
@@ -162,6 +165,7 @@ class FittedChargesViewWidget(ipw.VBox):
         html += "</table>"
         self.children = [ipw.HTML(html)]
         return
+
 class SnapshotsViewWidget(FolderDataViewer):
 
     """Custom widget to display Snapshots produced from ChemShell."""
@@ -195,3 +199,42 @@ class NewStructureViewWidget(StructureViewWidget):
         if hasattr(self, "viewer") and hasattr(self.viewer, "avr") and self.viewer.avr is not None:
             self.viewer.avr.model_style = 1
             self.viewer.avr.color_type = "CPK"
+
+class NewSinglefileDataViewer(ipw.VBox):
+
+    def __init__(self, node: SinglefileData, **kwargs):
+
+        super().__init__(**kwargs)
+
+        self.node = node
+        text_area = ipw.Textarea(
+            value=node.get_content(mode="r"),
+            disabled=True,
+            layout={"width": "100%"},
+            rows=20,
+            **kwargs
+        )
+        download_btn = ipw.Button(description="Download")
+        download_btn.on_click(self.download)
+        self.children = [text_area, download_btn]
+
+    #rkv copied from Folderdataviewer
+    def download(self, btn):
+        """Download selected file."""
+        from IPython.display import Javascript
+        import base64
+
+        raw_bytes = self.node.get_object_content(self.node.filename, "rb")
+        base64_payload = base64.b64encode(raw_bytes).decode()
+
+        javas = Javascript(
+            f"""
+            var link = document.createElement('a');
+            link.href = "data:;base64,{base64_payload}"
+            link.download = "{self.node.filename}"
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            """
+        )
+        display(javas)
