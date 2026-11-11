@@ -655,7 +655,7 @@ class SolvationWidget(ipw.VBox):
             layout = shared_layout,
             style = shared_style,
         )
-        link((self.model, "qmmm_opt_cycles"), (self.qmmm_opt_cycles, "value"))
+        link((self.model, "opt_cycles"), (self.qmmm_opt_cycles, "value"))
 
         self.qmmm_energy_cycles = ipw.IntText(
             value =500,
@@ -664,7 +664,7 @@ class SolvationWidget(ipw.VBox):
             layout = shared_layout,
             style = shared_style,
         )
-        link((self.model, "qmmm_energy_cycles"), (self.qmmm_energy_cycles, "value"))
+        link((self.model, "energy_cycles"), (self.qmmm_energy_cycles, "value"))
 
         self.qmmm_opt_container = ipw.VBox([ self.qmmm_opt_cycles, self.qmmm_energy_cycles,])
         self.qmmm_qm_container = ipw.VBox([self.qmmm_method_dropdown, self.qmmm_basis_string, self.qmmm_functional, self.multiplicity, self.dispersion, self.energy_tol])
