@@ -2,8 +2,9 @@
 
 import ipywidgets as ipw
 from aiida_chemshell.utils import ChemShellQMTheory
-from alc_aiidalab_widgets.widgets import FileUploadWidget
+from alc_aiidalab_widgets.widgets import FileUploadWidget, AiiDADatabaseQueryWidget
 from traitlets import link
+from aiida.orm import List, SinglefileData
 
 from aiidalab_chemshell.common.chemshell import BasisSetOptions
 from aiidalab_chemshell.common.utils import LoadingWidget
@@ -90,12 +91,15 @@ class ChemShellOptionsWidget(ipw.VBox):
         )
         self.advanced_options.observe(self._render_input_options, "value")
 
+        shared_layout = ipw.Layout(width ='50%', margin='5px 0px 0px 10px')
+        shared_style = {'description_width': '50%'}
         # QM Backend
         self.qm_theory_dropdown = ipw.Dropdown(
             options=self._get_qm_theory_options(),
             description="QM Theory:",
             disabled=False,
-            layout={"width": "50%"},
+            layout = shared_layout,
+            style = shared_style,
         )
 
         # Basis Quality
@@ -103,7 +107,8 @@ class ChemShellOptionsWidget(ipw.VBox):
             options={e.name: e for e in BasisSetOptions},
             description="Basis Quality:",
             disabled=False,
-            layout={"width": "50%"},
+            layout = shared_layout,
+            style = shared_style,
         )
         self.basis_dropdown.observe(self._update_basis_set, "value")
         self.basis_dropdown.index = 1
@@ -112,21 +117,25 @@ class ChemShellOptionsWidget(ipw.VBox):
             value="",
             description="Basis Set:",
             disabled=False,
-            layout={"width": "50%"},
+            layout = shared_layout,
+            style = shared_style,
         )
         link((self.model, "basis_set"), (self.basis_string, "value"))
+
         self.backend = ipw.Dropdown(
             options={e.name: e for e in ChemShellQMTheory},
             description="QM Backend:",
             disabled=False,
-            layout={"width": "50%"},
+            layout = shared_layout,
+            style = shared_style,
         )
         link((self.model, "qm_theory"), (self.backend, "value"))
         self.functional = ipw.Text(
             value="B3LYP",
             description="Functional:",
             disabled=False,
-            layout={"width": "50%"},
+            layout = shared_layout,
+            style = shared_style,
         )
         link((self.model, "functional"), (self.functional, "value"))
 
@@ -160,9 +169,86 @@ class ChemShellOptionsWidget(ipw.VBox):
             value="",
             description="QM Region:",
             disabled=False,
-            layout={"width": "50%"},
+            layout = shared_layout,
+            style = shared_style,
         )
         link((self.qm_region_text, "value"), (self.model, "qm_region"))
+
+        # Active region for QM/MM calculation
+        self.active_region_text = ipw.Text(
+            value="",
+            description="Active Region:",
+            disabled=False,
+            layout = shared_layout,
+            style = shared_style,
+        )
+        link((self.active_region_text, "value"), (self.model, "active_region"))
+
+        self.opt_cycles = ipw.IntText(
+            value =500,
+            description ="Num of Optimisation cycles:",
+            disabled = False,
+            layout = shared_layout,
+            style = shared_style,
+        )
+        link((self.model, "opt_cycles"), (self.opt_cycles, "value"))
+
+        self.energy_cycles = ipw.IntText(
+            value =500,
+            description ="Num of Energy cycles in Opt:",
+            disabled = False,
+            layout = shared_layout,
+            style = shared_style,
+        )
+        link((self.model, "energy_cycles"), (self.energy_cycles, "value"))
+
+
+        self.qm_region_database = AiiDADatabaseQueryWidget(
+            title="AiiDA Database",
+            query=[List]
+        )
+        self.qm_region_database.observe(self._on_database_qm, "data_object")
+
+        self.active_region_database = AiiDADatabaseQueryWidget(
+            title="AiiDA Database",
+            query=[List]
+        )
+        self.active_region_database.observe(self._on_database_active, "data_object")
+
+        self.active_database_check = ipw.Checkbox(
+            value=False, description="AiiDa DataBase", index=True,
+        )
+        self.active_database_check.observe(self._render_input_options, "value")
+
+        self.qm_database_check = ipw.Checkbox(
+            value=False, description="AiiDa DataBase", index=True,
+        )
+        self.qm_database_check.observe(self._render_input_options, "value")
+
+        self.qm_region = ipw.HBox([self.qm_region_text, self.qm_database_check])
+        self.active_region = ipw.HBox([self.active_region_text, self.active_database_check])
+
+        # Force Field Options
+        # Force Field File
+        self.ff_file = FileUploadWidget(description="Force Field:",
+            layout = shared_layout,
+            style = shared_style,
+        )
+        link((self.ff_file, "file"), (self.model, "force_field"))
+
+        self.ff_database_check = ipw.Checkbox(
+            value=False, description="AiiDa DataBase", index=True,
+        )
+        self.ff_database_check.observe(self._render_input_options, "value")
+
+        self.ff_database = AiiDADatabaseQueryWidget(
+            title="AiiDA Database",
+            query=[SinglefileData]
+        )
+        self.ff_database.observe(self._on_database_ff, "data_object")
+
+        self.ff_container = ipw.HBox([self.ff_file, self.ff_database_check])
+
 
         self._render_input_options({"new": self.advanced_options.value})
         return
@@ -177,8 +263,15 @@ class ChemShellOptionsWidget(ipw.VBox):
             self.enable_mm_chk,
         ]
         if self.enable_mm_chk.value:
-            children.append(self.qm_region_text)
-            children.append(self.ff_file)
+            children.append(self.ff_container)
+            if self.ff_database_check.value:
+                children.append(self.ff_database)
+            children.append(self.qm_region)
+            if self.qm_database_check.value:
+                children.append(self.qm_region_database)
+            children.append(self.active_region)
+            if self.active_database_check.value:
+                children.append(self.active_region_database)
         self.children = children
         return
 
@@ -190,12 +283,21 @@ class ChemShellOptionsWidget(ipw.VBox):
             self.backend,
             self.basis_string,
             self.functional,
+            self.opt_cycles,
+            self.energy_cycles,
             self.enable_vib,
             self.enable_mm_chk,
         ]
         if self.enable_mm_chk.value:
-            children.append(self.qm_region_text)
-            children.append(self.ff_file)
+            children.append(self.ff_container)
+            if self.ff_database_check.value:
+                children.append(self.ff_database)
+            children.append(self.qm_region)
+            if self.qm_database_check.value:
+                children.append(self.qm_region_database)
+            children.append(self.active_region)
+            if self.active_database_check.value:
+                children.append(self.active_region_database)
         self.children = children
         return
 
@@ -221,4 +323,30 @@ class ChemShellOptionsWidget(ipw.VBox):
         if change["new"] == change["old"]:
             return
         self.model.basis_set = change["new"].label
+        return
+
+    def _on_database_active(self, change: dict) -> None:
+        """When data is loaded from AiiDA database."""
+        if change["new"] == change["old"]:
+            return
+        if isinstance(change["new"], List):
+            new_list = change["new"].get_list()
+            self.model.active_region = ", ".join(map(str, new_list))
+        return
+
+    def _on_database_qm(self, change: dict) -> None:
+        """When data is loaded from AiiDA database."""
+        if change["new"] == change["old"]:
+            return
+        if isinstance(change["new"], List):
+            new_list = change["new"].get_list()
+            self.model.qm_region = ", ".join(map(str, new_list))
+        return
+
+    def _on_database_ff(self, change: dict) -> None:
+        """When data is loaded from AiiDA database."""
+        if change["new"] == change["old"]:
+            return
+        if isinstance(change["new"], SinglefileData):
+            self.model.force_field = change["new"]
         return
