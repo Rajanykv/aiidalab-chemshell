@@ -24,7 +24,8 @@ class ChemShellWorkflowModel(HasTraits):
 
     qm_theory = UseEnum(ChemShellQMTheory, ChemShellQMTheory.NWCHEM, allow_none=False)
     mm_theory = Unicode("DL_POLY", allow_none=True)
-    qm_region = Unicode("", allow_none=False)
+    qm_region = Unicode("", allow_none=True)
+    active_region = Unicode("", allow_none=True)
     use_dft = Bool(True).tag(sync=True)
     basis_quality = UseEnum(BasisSetOptions, BasisSetOptions.FAST, allow_none=False)
     functional = Unicode("B3LYP", allow_none=False)
@@ -55,7 +56,6 @@ class ChemShellWorkflowModel(HasTraits):
     #solvent_box = Instance(SinglefileData, default=SinglefileData(file=SolventBoxOptions.CHLOROFORM40.properties.filepath), allow_none=False)
     solvent_name= Unicode("chloroform", allow_none=False)
     solvent_boxsize = Int(40, allow_none=True)
-
     md_temperature = Float(300.0, allow_none=True)
     md_minimise_step = Float(1.0, allow_none=False)
     md_rcut = Float(-1.0, allow_none=True)
@@ -79,11 +79,11 @@ class ChemShellWorkflowModel(HasTraits):
     qmmm_use_dft = Bool(True, allow_none=True)
     qmmm_shell_radius = Float(20.0, allow_none=True)
     qmmm_active_region_radius = Float(12.0, allow_none=True)
-    qmmm_opt_cycles = Int(500, allow_none=True)
-    qmmm_energy_cycles = Int(500, allow_none=True)
     qmmm_dryrun = Bool(False, allow_none=True)
     qmmm_opt = Bool(False, allow_none=False)
     qmmm_snapshots = Int(0, allow_none=True)
+    opt_cycles = Int(1000, allow_none=True)
+    energy_cycles = Int(1000, allow_none=True)
 
     opt_dryrun = Bool(False, allow_none=True)
     charge_dryrun = Bool(False, allow_none=True)

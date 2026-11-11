@@ -183,6 +183,7 @@ class ChemShellProcess:
                     "theory": self.model.workflow_model.mm_theory,
                 }
             )
+
             builder.force_field_file = self.model.workflow_model.force_field
             builder.qmmm_parameters = Dict(
                 {
@@ -191,9 +192,18 @@ class ChemShellProcess:
                     ),
                 }
             )
+
+        optimisation_parameters = {}
+        if self.model.workflow_model.opt_cycles:
+            optimisation_parameters.update({"maxcycle": self.model.workflow_model.opt_cycles,})
+        if self.model.workflow_model.energy_cycles:
+            optimisation_parameters.update({"maxene": self.model.workflow_model.energy_cycles,})
+        if self.model.workflow_model.qmoptimisation_active_region_radius:
+            optimisation_parameters.update({"active": self.model.workflow_model.qmmm_active_region_radius,})
+
         # Configure additional SP based tasks
         if self.model.workflow_model.workflow == WorkflowOptions.NEB:
-            builder.optimisation_parameters = Dict({"neb": "frozen"})
+            optimisation_parameters.update({"neb": "frozen"})
             if self.model.workflow_model.structure_2.has_file:
                 builder.structure2 = (
                     self.model.workflow_model.structure_2.structure_file
@@ -201,7 +211,7 @@ class ChemShellProcess:
             else:
                 builder.structure2 = self.model.workflow_model.structure_2.structure
         elif self.model.workflow_model.vibrational_analysis:
-            builder.optimisation_parameters = Dict({"thermal": True})
+            optimisation_parameters.update({"thermal": True})
         else:
             builder.calculation_parameters = Dict(
                 {
@@ -209,6 +219,7 @@ class ChemShellProcess:
                     "hessian": self.model.workflow_model.hessian,
                 }
             )
+        builder.optimisation_parameters = Dict(optimisation_parameters)
         # Setup metadata and resource parameters
         builder.metadata.options.resources = {
             "num_mpiprocs_per_machine": self.model.resource_model.ncpus,
@@ -248,6 +259,7 @@ class ChemShellProcess:
                     "theory": self.model.workflow_model.mm_theory,
                 }
             )
+
             builder.chemsh.force_field_file = self.model.workflow_model.force_field
             builder.chemsh.qmmm_parameters = Dict(
                 {
@@ -256,6 +268,17 @@ class ChemShellProcess:
                     ),
                 }
             )
+
+        optimisation_parameters = {}
+        if self.model.workflow_model.opt_cycles:
+            optimisation_parameters.update({"maxcycle": self.model.workflow_model.opt_cycles,})
+        if self.model.workflow_model.energy_cycles:
+            optimisation_parameters.update({"maxene": self.model.workflow_model.energy_cycles,})
+        if self.model.workflow_model.qmmm_active_region_radius:
+            optimisation_parameters.update({"active": self.model.workflow_model.qmmm_active_region_radius,})
+
+        builder.chemsh.optimisation_parameters = Dict(optimisation_parameters)
+
         # builder.chemsh.calculation_parameters = Dict({"gradients": True})
         builder.vibrational_analysis = self.model.workflow_model.vibrational_analysis
         builder.chemsh.metadata.options.resources = {
@@ -536,8 +559,6 @@ class ChemShellProcess:
             "radius_active": self.model.workflow_model.qmmm_active_region_radius,
             "dryrun_qmmm": self.model.workflow_model.qmmm_dryrun,
             "qmmm_opt": self.model.workflow_model.qmmm_opt,
-            "opt_cycles": self.model.workflow_model.qmmm_opt_cycles,
-            "energy_cycles": self.model.workflow_model.qmmm_energy_cycles,
             "nsnapshots" : self.model.workflow_model.qmmm_snapshots,
         })
 
