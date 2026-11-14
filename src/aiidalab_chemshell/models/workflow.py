@@ -73,6 +73,7 @@ class ChemShellWorkflowModel(HasTraits):
     md_fixed_nvt  = Unicode("", allow_none=True)
     md_dryrunmd = Bool(False, allow_none=True)
     md_freeze_solute = Bool(True, allow_none=False)
+    md_quick_run = Bool(True, allow_none=False)
 
     qmmm_functional = Unicode("B3LYP", allow_none=True)
     qmmm_basis_set = Unicode("cc-pvdz", allow_none=True)
@@ -82,6 +83,7 @@ class ChemShellWorkflowModel(HasTraits):
     qmmm_dryrun = Bool(False, allow_none=True)
     qmmm_opt = Bool(False, allow_none=False)
     qmmm_snapshots = Int(0, allow_none=True)
+    qm_region_radius = Float(0.0, allow_none=True)
     opt_cycles = Int(1000, allow_none=True)
     energy_cycles = Int(1000, allow_none=True)
 
