@@ -13,7 +13,7 @@ from aiida.orm import SinglefileData
 
 from aiidalab_chemshell.common.chemshell import BasisSetOptions
 from aiidalab_chemshell.common.chemshell import SolventBoxOptions
-from aiidalab_chemshell.common.utils import LoadingWidget
+from alc_aiidalab_widgets.widgets import LoadingWidget
 from aiidalab_chemshell.common.node_viewers import NewStructureViewWidget
 from aiidalab_chemshell.models.workflow import ChemShellWorkflowModel
 

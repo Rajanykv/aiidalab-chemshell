@@ -3,11 +3,12 @@
 import ipywidgets as ipw
 from aiida_chemshell.utils import ChemShellQMTheory
 from alc_aiidalab_widgets.widgets import FileUploadWidget, AiiDADatabaseQueryWidget
+from alc_aiidalab_widgets.widgets import LoadingWidget
 from traitlets import link
 from aiida.orm import List, SinglefileData
 
 from aiidalab_chemshell.common.chemshell import BasisSetOptions
-from aiidalab_chemshell.common.utils import LoadingWidget
+from aiidalab_chemshell.common.force_field_selector import ForceFieldSelectionWidget
 from aiidalab_chemshell.models.workflow import ChemShellWorkflowModel
 
 
@@ -44,7 +45,7 @@ class ChemShellOptionsWidget(ipw.VBox):
         )
 
         # Force Field File
-        self.ff_file = FileUploadWidget(description="Force Field:")
+        self.ff_file = ForceFieldSelectionWidget()
 
         self.children = [self.header, LoadingWidget()]
 
@@ -230,25 +231,8 @@ class ChemShellOptionsWidget(ipw.VBox):
 
         # Force Field Options
         # Force Field File
-        self.ff_file = FileUploadWidget(description="Force Field:",
-            layout = shared_layout,
-            style = shared_style,
-        )
-        link((self.ff_file, "file"), (self.model, "force_field"))
-
-        self.ff_database_check = ipw.Checkbox(
-            value=False, description="AiiDa DataBase", index=True,
-        )
-        self.ff_database_check.observe(self._render_input_options, "value")
-
-        self.ff_database = AiiDADatabaseQueryWidget(
-            title="AiiDA Database",
-            query=[SinglefileData]
-        )
-        self.ff_database.observe(self._on_database_ff, "data_object")
-
-        self.ff_container = ipw.HBox([self.ff_file, self.ff_database_check])
-
+        self.ff_file = ForceFieldSelectionWidget()
+        link((self.ff_file, "force_field"), (self.model, "force_field"))
 
         self._render_input_options({"new": self.advanced_options.value})
         return
@@ -263,9 +247,7 @@ class ChemShellOptionsWidget(ipw.VBox):
             self.enable_mm_chk,
         ]
         if self.enable_mm_chk.value:
-            children.append(self.ff_container)
-            if self.ff_database_check.value:
-                children.append(self.ff_database)
+            children.append(self.ff_file)
             children.append(self.qm_region)
             if self.qm_database_check.value:
                 children.append(self.qm_region_database)
@@ -289,9 +271,7 @@ class ChemShellOptionsWidget(ipw.VBox):
             self.enable_mm_chk,
         ]
         if self.enable_mm_chk.value:
-            children.append(self.ff_container)
-            if self.ff_database_check.value:
-                children.append(self.ff_database)
+            children.append(self.ff_file)
             children.append(self.qm_region)
             if self.qm_database_check.value:
                 children.append(self.qm_region_database)
@@ -341,12 +321,4 @@ class ChemShellOptionsWidget(ipw.VBox):
         if isinstance(change["new"], List):
             new_list = change["new"].get_list()
             self.model.qm_region = ", ".join(map(str, new_list))
-        return
-
-    def _on_database_ff(self, change: dict) -> None:
-        """When data is loaded from AiiDA database."""
-        if change["new"] == change["old"]:
-            return
-        if isinstance(change["new"], SinglefileData):
-            self.model.force_field = change["new"]
         return

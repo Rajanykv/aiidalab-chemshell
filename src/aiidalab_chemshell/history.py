@@ -1,8 +1,5 @@
 """Defines the process history applicaion page."""
 
-from datetime import datetime
-
-import aiidalab_widgets_base as awb
 import ipywidgets as ipw
 from aiida_chemshell.calculations.base import ChemShellCalculation
 from aiida_chemshell.workflows.batch_calculation import BatchProcessWorkChain
@@ -12,8 +9,10 @@ from aiida_chemshell.workflows.solvation import SolvationWorkChain
 from alc_aiidalab_widgets.widgets import AiiDADatabaseQueryWidget
 from IPython.display import display
 
+from aiidalab_chemshell.common.citation import chemshell_footer
 from aiidalab_chemshell.common.navigation import QuickAccessButtons
 from aiidalab_chemshell.common.node_viewers import CustomAiidaNodeViewWidget
+from aiidalab_chemshell.common.process_tree import ProcessNodesTreeWidget
 from aiidalab_chemshell.common.theme import (
     APP_ROOT_CLASS,
     chemshell_appbar,
@@ -76,15 +75,7 @@ class HistoryAppView(ipw.VBox):
             ]
         )
 
-        footer = ipw.HTML(
-            f"""
-            <footer>
-                Copyright (c) {datetime.now().year} Ada Lovelace Centre
-                (STFC) <br>
-            </footer>
-            """,
-            layout={"align-content": "right"},
-        )
+        footer = chemshell_footer()
         h_line = ipw.HTML("<hr>")
 
         subtitle = ipw.HTML(
@@ -115,7 +106,7 @@ class HistoryAppView(ipw.VBox):
         )
         self.lookup_widget.observe(self._update_node_view, "data_object")
 
-        self.node_tree = awb.ProcessNodesTreeWidget()
+        self.node_tree = ProcessNodesTreeWidget()
         ipw.dlink((self.model, "process_uuid"), (self.node_tree, "value"))
         self.node_view = CustomAiidaNodeViewWidget()
         ipw.dlink(
