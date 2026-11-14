@@ -53,9 +53,9 @@ class ChemShellWorkflowModel(HasTraits):
 
     default_guide = ""
 
-    #solvent_box = Instance(SinglefileData, default=SinglefileData(file=SolventBoxOptions.CHLOROFORM40.properties.filepath), allow_none=False)
+    #solvent_box = Instance(SinglefileData, default=SinglefileData(file=SolventBoxOptions.CHLOROFORM80.properties.filepath), allow_none=False)
     solvent_name= Unicode("chloroform", allow_none=False)
-    solvent_boxsize = Int(40, allow_none=True)
+    solvent_boxsize = Int(80, allow_none=True)
     md_temperature = Float(300.0, allow_none=True)
     md_minimise_step = Float(1.0, allow_none=False)
     md_rcut = Float(-1.0, allow_none=True)

@@ -543,7 +543,7 @@ class ChemShellProcess:
         #if self.model.workflow_model.solvent_box:
             #builder.solvent_box =  self.model.workflow_model.solvent_box
         #else:
-            #builder.solvent_box =  SinglefileData(file = SolventBoxOptions.CHLOROFORM40.value)
+            #builder.solvent_box =  SinglefileData(file = SolventBoxOptions.CHLOROFORM80.value)
 
         builder.solvent_parameters = Dict({
             "box_length" : self.model.workflow_model.solvent_boxsize,
