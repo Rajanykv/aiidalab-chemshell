@@ -245,7 +245,7 @@ class SolvationWidget(ipw.VBox):
             options = self.boxlength_options,
             ensure_option=False,
             placeholder='Type Length',
-            value= "40",
+            value= "80",
             disabled = False,
             description ="Half Side-length(A)",
             layout = shared_layout,
