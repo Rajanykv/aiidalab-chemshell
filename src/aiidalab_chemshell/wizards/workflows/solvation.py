@@ -348,7 +348,7 @@ class SolvationWidget(ipw.VBox):
         )
         link((self.model, "esp_basis_set"), (self.esp_basis_string, "value"))
         self.esp_functional = ipw.Text(
-            value ="B3LYP",
+            value ="BLYP",
             description ="Functional:",
             disabled = False,
             layout = shared_layout,
