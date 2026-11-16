@@ -119,6 +119,9 @@ class ResourceSetupBox(ipw.VBox):
             description="Code:",
             show_mpi=True,
         )
+        #rajany temp for solvent
+        #self.code_selector.children[2].diabled = False
+        self.code_selector.children[2].value = 4
         # Match the width/description-label styling used by the sibling fields
         # below so the inputs line up (CodeSelector hardcodes its own layout,
         # so these must be overridden after construction).
