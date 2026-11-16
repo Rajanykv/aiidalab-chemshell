@@ -2,7 +2,7 @@
 
 import ipywidgets as ipw
 from aiida_chemshell.utils import ChemShellQMTheory
-from alc_aiidalab_widgets.widgets import FileUploadWidget, AiiDADatabaseQueryWidget
+from alc_aiidalab_widgets.widgets import AiiDADatabaseQueryWidget
 from alc_aiidalab_widgets.widgets import LoadingWidget
 from traitlets import link
 from aiida.orm import List, SinglefileData
@@ -202,7 +202,6 @@ class ChemShellOptionsWidget(ipw.VBox):
             style = shared_style,
         )
         link((self.model, "energy_cycles"), (self.energy_cycles, "value"))
-
 
         self.qm_region_database = AiiDADatabaseQueryWidget(
             title="AiiDA Database",

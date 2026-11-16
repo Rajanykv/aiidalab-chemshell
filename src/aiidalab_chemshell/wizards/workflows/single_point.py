@@ -4,6 +4,8 @@ import ipywidgets as ipw
 from aiida_chemshell.utils import ChemShellQMTheory
 from alc_aiidalab_widgets.widgets import LoadingWidget
 from traitlets import Bool, HasTraits, link
+from alc_aiidalab_widgets.widgets import AiiDADatabaseQueryWidget
+from aiida.orm import List
 
 from aiidalab_chemshell.common.chemshell import BasisSetOptions
 from aiidalab_chemshell.common.force_field_selector import ForceFieldSelectionWidget
@@ -113,6 +115,19 @@ class SinglePointCalcWidget(ipw.VBox):
         )
         link((self.qm_region_text, "value"), (self.model, "qm_region"))
 
+        self.qm_region_database = AiiDADatabaseQueryWidget(
+            title="AiiDA Database",
+            query=[List]
+        )
+        self.qm_region_database.observe(self._on_database_qm, "data_object")
+
+        self.qm_database_check = ipw.Checkbox(
+            value=False, description="AiiDa DataBase", index=True,
+        )
+        self.qm_database_check.observe(self._render_input_options, "value")
+
+        self.qm_region = ipw.HBox([self.qm_region_text, self.qm_database_check])
+
         # Force Field File
         self.ff_file = ForceFieldSelectionWidget()
         ipw.dlink((self.ff_file, "force_field"), (self.model, "force_field"))
@@ -130,7 +145,7 @@ class SinglePointCalcWidget(ipw.VBox):
             self.enable_mm_chk,
         ]
         if self.enable_mm_chk.value:
-            children.append(self.qm_region_text)
+            children.append(self.qm_region)
             children.append(self.ff_file)
         self.children = children
         return
@@ -148,7 +163,7 @@ class SinglePointCalcWidget(ipw.VBox):
             self.enable_mm_chk,
         ]
         if self.enable_mm_chk.value:
-            children.append(self.qm_region_text)
+            children.append(self.qm_region)
             children.append(self.ff_file)
         self.children = children
         return
@@ -183,6 +198,14 @@ class SinglePointCalcWidget(ipw.VBox):
         self._render_input_options({"new": self.advanced_options.value})
         return
 
+    def _on_database_qm(self, change: dict) -> None:
+        """When data is loaded from AiiDA database."""
+        if change["new"] == change["old"]:
+            return
+        if isinstance(change["new"], List):
+            new_list = change["new"].get_list()
+            self.model.qm_region = ", ".join(map(str, new_list))
+        return
 
 class DerivativeOptions(ipw.HBox, HasTraits):
     """Inline derivative checkboxes."""
