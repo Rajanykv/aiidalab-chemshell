@@ -463,7 +463,7 @@ class SolvationWidget(ipw.VBox):
 
         self.minimisation_step = ipw.FloatText(
             value= 1.0, step= 0.5,
-            description = "Minimisation Step Size( Fs )",
+            description = "MD Time Step( Fs )",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -571,7 +571,7 @@ class SolvationWidget(ipw.VBox):
 
         self.esp_container = ipw.VBox([self.chargefit_npoints, self.chargefit_type, self.chargefit_tolerance, self.chargefit_vdw_scale, self.chargefit_nlayers])
 
-        self.md_container = ipw.VBox([self.temperature, self.length_npt, self.length_nvt, self.n_minimise_nvt, self.n_minimise_npt, self.length_tot_run, self.minimisation_step, self.n_snapshots, self.padding, self.rcut, self.length_ncycles])
+        self.md_container = ipw.VBox([self.temperature, self.length_npt, self.length_nvt, self.n_minimise_nvt, self.n_minimise_npt, self.length_tot_run, self.minimisation_step, self.n_snapshots, self.padding, self.rcut,])
 
         self.shell_radius = ipw.FloatText(
             value =20.0,
@@ -658,22 +658,23 @@ class SolvationWidget(ipw.VBox):
         self.qmmm_opt.observe(self._render_input_options, names ="value")
 
         self.qm_selection_quick = ipw.Dropdown(
-            options ={"Solute only(default)" : True, "Advanced selection" : False},
+            options ={"Quick(solute only)" : 0, "Full" : 1,},
             description ="QM Region selection",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
         )
-        self.qm_selection_quick.observe(self._render_input_options, names ="value")
+        #self.qm_selection_quick.observe(self._render_input_options, names ="value")
+        link((self.model, "qm_region_choice"), (self.qm_selection_quick, "value"))
 
         self.qm_region_radius = ipw.FloatText(
-            description ="Qm region radius( Angstrom ):",
+            description ="Qm region solvent radius( Angstrom ):",
             disabled = False,
             layout = shared_layout,
             style={"description_width": "initial"}
         )
         link((self.model, "qm_region_radius"), (self.qm_region_radius, "value"))
-        self.qm_region_box = ipw.VBox([self.qm_region_radius], layout=ipw.Layout(margin="20px 0px 10px 150px"))
+        self.qm_region_box = ipw.VBox([self.qm_region_radius], layout=ipw.Layout(margin="0px 0px 10px 150px"))
 
         self.qmmm_opt_cycles = ipw.IntText(
             value =500,
@@ -696,9 +697,9 @@ class SolvationWidget(ipw.VBox):
         self.qmmm_opt_container = ipw.VBox([ self.qmmm_opt_cycles, self.qmmm_energy_cycles,])
         self.qmmm_qm_container = ipw.VBox([self.qmmm_method_dropdown, self.qmmm_basis_string, self.qmmm_functional, self.multiplicity, self.dispersion, self.energy_tol])
 
-        self.qmmm_adv_container = ipw.VBox([ self.qm_selection_quick, self.shell_radius, self.active_radius])
+        self.qmmm_adv_container = ipw.VBox([self.shell_radius, self.active_radius])
 
-        self.qmmm_container = ipw.VBox([self.qmmm_label, self.qmmm_dryrun, self.snapshot_box, self.advanced_qmmm_options,])
+        self.qmmm_container = ipw.VBox([self.qmmm_label, self.qmmm_dryrun, self.snapshot_box, self.qm_selection_quick, self.advanced_qmmm_options,])
 
         self.mm_container = ipw.VBox([self.mm_theory_dropdown])
 
@@ -717,14 +718,9 @@ class SolvationWidget(ipw.VBox):
             self.solvation_label,
             self.solvent_container,
             self.solvent_structfile,
-            #self.solventbox_view_select,
-            #self.viewer,
             self.esp_label,
-            self.advanced_esp_options,
-            self.esp_method_dropdown,
             self.esp_qm_options,
             self.md_label,
-            self.mm_theory_dropdown,
             self.md_quick_dropdown,
             self.advanced_md_options,
             self.advanced_md_mm_options,
@@ -748,8 +744,7 @@ class SolvationWidget(ipw.VBox):
             #self.solventbox_view_select,
             #self.viewer,
         ])
-        children.extend([self.esp_label, self.advanced_esp_options,
-                        self.esp_method_dropdown])
+        children.extend([self.esp_label])
 
         if self.advanced_esp_options.value:
             children.append(self.esp_container)
@@ -759,7 +754,6 @@ class SolvationWidget(ipw.VBox):
             children.append(self.esp_qm_container)
 
         children.extend([self.md_label, self.advanced_md_options, self.md_quick_dropdown])
-        children.append(self.mm_theory_dropdown)
         if self.advanced_md_options.value:
             children.append(self.md_container)
         children.append(self.advanced_md_mm_options)
@@ -768,11 +762,8 @@ class SolvationWidget(ipw.VBox):
         children.append(self.submit_md_dry_btn)
 
         children.append(self.qmmm_container)
-        if self.qmmm_opt.value:
-            children.append(self.qmmm_opt_container)
         if self.advanced_qmmm_options.value:
             children.append(self.qmmm_adv_container)
-        if not self.qm_selection_quick.value:
             children.append(self.qm_region_box)
 
         self.children = children

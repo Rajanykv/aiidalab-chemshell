@@ -84,6 +84,7 @@ class ChemShellWorkflowModel(HasTraits):
     qmmm_opt = Bool(False, allow_none=False)
     qmmm_snapshots = Int(0, allow_none=True)
     qm_region_radius = Float(0.0, allow_none=True)
+    qm_region_choice = Int(0, allow_none=True)
     opt_cycles = Int(1000, allow_none=True)
     energy_cycles = Int(1000, allow_none=True)
 
