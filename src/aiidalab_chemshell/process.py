@@ -518,7 +518,7 @@ class ChemShellProcess:
             mm_parameters.update({"ff" : "charmm"})
         builder.mm_parameters = Dict(mm_parameters)
 
-        builder.md_parameters = Dict({
+        md_parameters = {
             "npt" : {"length" : self.model.workflow_model.md_length_npt,
                     "minimisation" :self.model.workflow_model.md_minimisation_npt,
                    },
@@ -532,11 +532,16 @@ class ChemShellProcess:
             "padding" : self.model.workflow_model.md_padding,
             "nsnapshots" : self.model.workflow_model.md_nsnapshots,
             "freeze_solute" : self.model.workflow_model.md_freeze_solute,
+            "timestep" : self.model.workflow_model.md_time_step,
             #"solutes_dist" : self.model.workflow_model.md_solutes_dist,
 	    #"max_ncycles" : self.model.workflow_model.md_max_ncycles,
             #"fixed_npt" : self.model.workflow_model.md_fixed_npt,
             #"fixed_nvt" : self.model.workflow_model.md_fixed_nvt,
-        })
+        }
+        if self.model.workflow_model.md_quick_run:
+            md_parameters.update({"minimise" : False })
+        builder.md_parameters = Dict(md_parameters)
+
         workflow_control_flags.update( { "dryrunmd" :  self.model.workflow_model.md_dryrunmd } )
         builder.workflow_control_flags = Dict(workflow_control_flags)
 
@@ -557,15 +562,26 @@ class ChemShellProcess:
                 "basis": self.model.workflow_model.qmmm_basis_set,
             }
 
-        builder.qmmm_parameters = Dict({
+        qmmm_parameters = {
             "qm_parameters" : qm_parameters,
-            "radius_shell": self.model.workflow_model.qmmm_shell_radius,
+            "radius_whole_region": self.model.workflow_model.qmmm_shell_radius,
             "radius_active": self.model.workflow_model.qmmm_active_region_radius,
             "dryrun_qmmm": self.model.workflow_model.qmmm_dryrun,
             "qmmm_opt": self.model.workflow_model.qmmm_opt,
             "nsnapshots" : self.model.workflow_model.qmmm_snapshots,
-        })
+        }
+        if not self.model.workflow_model.qm_region_quick:
+            #if user provided
+            if self.model.workflow_model.qm_region_radius > 0:
+                qmmm_parameters.update({
+                "qm_region_radius" : self.model.workflow_model.qm_region_radius
+            })
+            else:
+                qmmm_parameters.update({
+                "qm_region_radius" : 4.0,
+            })
 
+        builder.qmmm_parameters = Dict(qmmm_parameters)
         self.node = submit(builder)
         self.node.label = self.model.resource_model.process_label
         self.node.description = self.model.resource_model.process_description

@@ -466,14 +466,14 @@ class SolvationWidget(ipw.VBox):
         )
         link((self.model, "md_temperature"), (self.temperature, "value"))
 
-        self.minimisation_step = ipw.FloatText(
+        self.mdtime_step = ipw.FloatText(
             value= 1.0, step= 0.5,
             description = "MD Time Step( Fs )",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
         )
-        link((self.model, "md_minimise_step"), (self.minimisation_step, "value"))
+        link((self.model, "md_time_step"), (self.mdtime_step, "value"))
 
         self.length_npt = ipw.IntText(
             value =5,
@@ -576,23 +576,23 @@ class SolvationWidget(ipw.VBox):
 
         self.esp_container = ipw.VBox([self.chargefit_npoints, self.chargefit_type, self.chargefit_tolerance, self.chargefit_vdw_scale, self.chargefit_nlayers])
 
-        self.md_container = ipw.VBox([self.temperature, self.length_npt, self.length_nvt, self.n_minimise_nvt, self.n_minimise_npt, self.length_tot_run, self.minimisation_step, self.n_snapshots, self.padding, self.rcut,])
+        self.md_container = ipw.VBox([self.temperature, self.length_npt, self.length_nvt, self.n_minimise_nvt, self.n_minimise_npt, self.length_tot_run, self.mdtime_step, self.n_snapshots, self.padding, self.rcut,])
 
         self.shell_radius = ipw.FloatText(
             value =20.0,
-            description ="Radius of the Cluster( Angstrom )",
+            description ="Radius of Whole QMMM Sphere( Angstrom )",
             disabled = False,
             layout = shared_layout3,
-            style = shared_style,
+            style={"description_width": "initial"}
         )
         link((self.model, "qmmm_shell_radius"), (self.shell_radius, "value"))
 
         self.active_radius = ipw.FloatText(
             value =12.0,
-            description ="Radius of Active region( Angstrom )",
+            description ="Radius of Active region from solute( Angstrom )",
             disabled = False,
             layout = shared_layout3,
-            style = shared_style,
+            style={"description_width": "initial"}
         )
         link((self.model, "qmmm_active_region_radius"), (self.active_radius, "value"))
 
@@ -627,6 +627,16 @@ class SolvationWidget(ipw.VBox):
             style = shared_style,
         )
         link((self.model, "md_quick_run"), (self.md_quick_dropdown, "value"))
+        def _on_md_quick(change: dict) -> None:
+            if change["new"] ==  False:
+               self.model.md_length_npt = self.model.md_length_npt_l
+               self.model.md_length_nvt = self.model.md_length_nvt_l
+               self.model.md_length_production = self.model.md_length_production_l
+            else:
+               self.model.md_length_npt = self.model.md_length_npt_s
+               self.model.md_length_nvt = self.model.md_length_nvt_s
+               self.model.md_length_production = self.model.md_length_production_s
+        self.md_quick_dropdown.observe(_on_md_quick, names='value')
 
         self.qmmm_basis_string = ipw.Text(
             value ="",
@@ -663,23 +673,23 @@ class SolvationWidget(ipw.VBox):
         self.qmmm_opt.observe(self._render_input_options, names ="value")
 
         self.qm_selection_quick = ipw.Dropdown(
-            options ={"Quick(solute only)" : 0, "Full" : 1,},
+            options ={"Quick(solute only)" : True, "Full" : False,},
             description ="QM Region selection",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
         )
         #self.qm_selection_quick.observe(self._render_input_options, names ="value")
-        link((self.model, "qm_region_choice"), (self.qm_selection_quick, "value"))
+        link((self.model, "qm_region_quick"), (self.qm_selection_quick, "value"))
 
         self.qm_region_radius = ipw.FloatText(
-            description ="Qm region solvent radius( Angstrom ):",
+            description ="Radius of Solvent region from solute( Angstrom ):",
             disabled = False,
             layout = shared_layout,
             style={"description_width": "initial"}
         )
         link((self.model, "qm_region_radius"), (self.qm_region_radius, "value"))
-        self.qm_region_box = ipw.VBox([self.qm_region_radius], layout=ipw.Layout(margin="0px 0px 10px 150px"))
+        self.qm_region_box = ipw.VBox([self.qm_region_radius], layout=ipw.Layout(margin="0px 0px 10px 93px", width="100%"))
 
         self.qmmm_opt_cycles = ipw.IntText(
             value =500,
