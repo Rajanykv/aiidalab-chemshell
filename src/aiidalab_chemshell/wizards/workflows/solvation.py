@@ -448,8 +448,13 @@ class SolvationWidget(ipw.VBox):
         def _rcut_update(change):
             if change["new"] == "Default":
                 self.model.md_rcut = -1
+            if change["new"] == "default":
+                self.model.md_rcut = -1
             else:
-                self.model.md_rcut = float(change["new"])
+                try:
+                    self.model.md_rcut = float(change["new"])
+                except ValueError:
+                    pass
         self.rcut.observe(_rcut_update, names="value")
 
         self.temperature = ipw.FloatText(
