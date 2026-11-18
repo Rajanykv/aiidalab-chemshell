@@ -198,7 +198,7 @@ class ChemShellProcess:
             optimisation_parameters.update({"maxcycle": self.model.workflow_model.opt_cycles,})
         if self.model.workflow_model.energy_cycles:
             optimisation_parameters.update({"maxene": self.model.workflow_model.energy_cycles,})
-        if self.model.workflow_model.qmoptimisation_active_region_radius:
+        if self.model.workflow_model.qmmm_active_region_radius:
             optimisation_parameters.update({"active": self.model.workflow_model.qmmm_active_region_radius,})
 
         # Configure additional SP based tasks

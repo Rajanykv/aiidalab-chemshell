@@ -145,8 +145,10 @@ class SinglePointCalcWidget(ipw.VBox):
             self.enable_mm_chk,
         ]
         if self.enable_mm_chk.value:
-            children.append(self.qm_region)
             children.append(self.ff_file)
+            children.append(self.qm_region)
+            if self.qm_database_check.value:
+                children.append(self.qm_region_database)
         self.children = children
         return
 
@@ -163,8 +165,10 @@ class SinglePointCalcWidget(ipw.VBox):
             self.enable_mm_chk,
         ]
         if self.enable_mm_chk.value:
-            children.append(self.qm_region)
             children.append(self.ff_file)
+            children.append(self.qm_region)
+            if self.qm_database_check.value:
+                children.append(self.qm_region_database)
         self.children = children
         return
 
