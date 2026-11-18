@@ -267,7 +267,8 @@ class ChemShellProcess:
         if self.model.workflow_model.energy_cycles:
             optimisation_parameters.update({"maxene": self.model.workflow_model.energy_cycles,})
         if self.model.workflow_model.qmmm_active_region_radius:
-            optimisation_parameters.update({"active": self.model.workflow_model.qmmm_active_region_radius,})
+            active_list = ChemShellProcess._extract_qm_region(self.model.workflow_model.active_region)
+            optimisation_parameters.update({"active": active_list})
 
         builder.chemsh.optimisation_parameters = Dict(optimisation_parameters)
 
