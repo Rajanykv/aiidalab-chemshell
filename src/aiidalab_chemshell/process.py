@@ -193,17 +193,10 @@ class ChemShellProcess:
                 }
             )
 
-        optimisation_parameters = {}
-        if self.model.workflow_model.opt_cycles:
-            optimisation_parameters.update({"maxcycle": self.model.workflow_model.opt_cycles,})
-        if self.model.workflow_model.energy_cycles:
-            optimisation_parameters.update({"maxene": self.model.workflow_model.energy_cycles,})
-        if self.model.workflow_model.qmmm_active_region_radius:
-            optimisation_parameters.update({"active": self.model.workflow_model.qmmm_active_region_radius,})
 
         # Configure additional SP based tasks
         if self.model.workflow_model.workflow == WorkflowOptions.NEB:
-            optimisation_parameters.update({"neb": "frozen"})
+            builder.optimisation_parameters = Dict({"neb": "frozen"})
             if self.model.workflow_model.structure_2.has_file:
                 builder.structure2 = (
                     self.model.workflow_model.structure_2.structure_file
@@ -211,7 +204,7 @@ class ChemShellProcess:
             else:
                 builder.structure2 = self.model.workflow_model.structure_2.structure
         elif self.model.workflow_model.vibrational_analysis:
-            optimisation_parameters.update({"thermal": True})
+            builder.optimisation_parameters = Dict({"thermal": True})
         else:
             builder.calculation_parameters = Dict(
                 {
@@ -219,7 +212,6 @@ class ChemShellProcess:
                     "hessian": self.model.workflow_model.hessian,
                 }
             )
-        builder.optimisation_parameters = Dict(optimisation_parameters)
         # Setup metadata and resource parameters
         builder.metadata.options.resources = {
             "num_mpiprocs_per_machine": self.model.resource_model.chemsh_num_mpiprocs,
