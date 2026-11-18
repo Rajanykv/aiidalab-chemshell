@@ -128,7 +128,7 @@ class SolvationWidget(ipw.VBox):
         self.advanced_qm_options.observe(self._render_input_options, names ="value")
 
         self.esp_qm_options = ipw.Checkbox(
-            value = False, description="Show QM Option for (R)ESP",
+            value = False, description="Show QM Options for (R)ESP",
             layout = shared_layout2,
             style = shared_style2,
         )
@@ -240,7 +240,7 @@ class SolvationWidget(ipw.VBox):
         #)
         #self.solventbox_size.index = 0
 
-        self.boxlength_options = [str(b.properties.cube_length) for b in SolventBoxOptions]
+        self.boxlength_options = [str(b.properties.cube_length) for b in SolventBoxOptions] + ["Enter"]
         self.solventbox_size = ipw.Combobox(
             options = self.boxlength_options,
             ensure_option=False,
@@ -262,7 +262,7 @@ class SolvationWidget(ipw.VBox):
         #)
         #self.solventname_drop.index = 0
 
-        self.name_options = [b.properties.name for b in SolventBoxOptions]
+        self.name_options = [b.properties.name for b in SolventBoxOptions] + ["Enter"]
         self.solventname_drop = ipw.Combobox(
             options = self.name_options,
             ensure_option=False,
@@ -589,7 +589,7 @@ class SolvationWidget(ipw.VBox):
 
         self.active_radius = ipw.FloatText(
             value =12.0,
-            description ="Radius of Active region from solute( Angstrom )",
+            description ="Radius of Active region( Angstrom )",
             disabled = False,
             layout = shared_layout3,
             style={"description_width": "initial"}
@@ -680,7 +680,7 @@ class SolvationWidget(ipw.VBox):
             style = shared_style,
         )
         link((self.model, "qm_region_quick"), (self.qm_selection_quick, "value"))
-        self.radius_options = [b.properties.active_radius for b in SolventBoxOptions]
+        self.radius_options = [b.properties.active_radius for b in SolventBoxOptions] + ["Enter"]
         def _on_qm_selection(change: dict) -> None:
             if change["new"] ==  False:
                self.model.qm_region_radius = self.radius_options[self.solventbox_dropdown.index]
@@ -884,10 +884,14 @@ class SolvationWidget(ipw.VBox):
                 #self.solventname_drop.index = self.solventbox_dropdown.index
                 #self.solventbox_size.index = self.solventbox_dropdown.index
                 self.solventbox_size.value = str(self.boxlength_options[self.solventbox_dropdown.index])
-                self.model.solvent_boxsize= int(self.solventbox_size.value)
+                try:
+                    self.model.solvent_boxsize= int(self.solventbox_size.value)
+                except ValueError:
+                    pass
                 self.solventname_drop.value = self.name_options[self.solventbox_dropdown.index]
                 self.model.solvent_name = self.solventname_drop.value
-                self.model.qm_region_radius = self.radius_options[self.solventbox_dropdown.index]
+                if isinstance(self.radius_options[self.solventbox_dropdown.index], float):
+                    self.model.qm_region_radius = self.radius_options[self.solventbox_dropdown.index]
             return
 
     def disable(self, disabled: bool = True) -> None:
