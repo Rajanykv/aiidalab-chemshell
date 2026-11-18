@@ -571,15 +571,9 @@ class ChemShellProcess:
             "nsnapshots" : self.model.workflow_model.qmmm_snapshots,
         }
         if not self.model.workflow_model.qm_region_quick:
-            #if user provided
-            if self.model.workflow_model.qm_region_radius > 0:
-                qmmm_parameters.update({
-                "qm_region_radius" : self.model.workflow_model.qm_region_radius
-            })
-            else:
-                qmmm_parameters.update({
-                "qm_region_radius" : 4.0,
-            })
+            qmmm_parameters.update({
+                "radius_qm_region" : self.model.workflow_model.qm_region_radius
+        })
 
         builder.qmmm_parameters = Dict(qmmm_parameters)
         self.node = submit(builder)

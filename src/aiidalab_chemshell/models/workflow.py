@@ -49,7 +49,8 @@ class ChemShellWorkflowModel(HasTraits):
     chargefit_tolerance = Float(1e-10, allow_none=False)
     esp_use_dft = Bool(False).tag(sync=True)
     esp_functional = Unicode("BLYP", allow_none=False)
-    esp_basis_set = Unicode("6-31g*", allow_none=False)
+    #esp_basis_set = Unicode("6-31g*", allow_none=False)
+    esp_basis_set = Unicode("3-21g", allow_none=False)
 
     default_guide = ""
 
@@ -85,8 +86,8 @@ class ChemShellWorkflowModel(HasTraits):
     qmmm_functional = Unicode("B3LYP", allow_none=True)
     qmmm_basis_set = Unicode("cc-pvdz", allow_none=True)
     qmmm_use_dft = Bool(True, allow_none=True)
-    qmmm_shell_radius = Float(20.0, allow_none=True)
-    qmmm_active_region_radius = Float(12.0, allow_none=True)
+    qmmm_shell_radius = Float(15.0, allow_none=True)
+    qmmm_active_region_radius = Float(10.0, allow_none=True)
     qmmm_dryrun = Bool(False, allow_none=True)
     qmmm_opt = Bool(False, allow_none=False)
     qmmm_snapshots = Int(0, allow_none=True)

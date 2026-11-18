@@ -679,11 +679,16 @@ class SolvationWidget(ipw.VBox):
             layout = shared_layout,
             style = shared_style,
         )
-        #self.qm_selection_quick.observe(self._render_input_options, names ="value")
         link((self.model, "qm_region_quick"), (self.qm_selection_quick, "value"))
+        def _on_qm_selection(change: dict) -> None:
+            if change["new"] ==  False:
+               self.model.qm_region_radius = 5.0
+            else:
+               self.model.qm_region_radius = 0.0
+        self.qm_selection_quick.observe(_on_qm_selection, names ="value")
 
         self.qm_region_radius = ipw.FloatText(
-            description ="Radius of Solvent region from solute( Angstrom ):",
+            description ="Radius of QM Solvent region from solute( Angstrom ):",
             disabled = False,
             layout = shared_layout,
             style={"description_width": "initial"}
