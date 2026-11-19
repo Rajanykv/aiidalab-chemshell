@@ -823,6 +823,7 @@ class SolvationWidget(ipw.VBox):
             return
         self.model.basis_set = change["new"].label
         self.model.functional = change["new"].functional
+        self.model.harmonic = change["new"].harmonic
         return
 
     def _view_solventbox(self, change: dict) -> None:

@@ -174,6 +174,7 @@ class ChemShellProcess:
                 "method": "dft" if self.model.workflow_model.use_dft else "hf",
                 "functional": self.model.workflow_model.functional,
                 "basis": self.model.workflow_model.basis_set,
+                "harmonic" : self.model.workflow_model.harmonic,
             }
         )
         # Configure MM parameters if QM/MM approach specified
@@ -243,6 +244,7 @@ class ChemShellProcess:
                 "method": "dft",
                 "functional": self.model.workflow_model.functional,
                 "basis": self.model.workflow_model.basis_set,
+                "harmonic" : self.model.workflow_model.harmonic,
             }
         )
         if self.model.workflow_model.use_mm:
@@ -304,6 +306,7 @@ class ChemShellProcess:
                 "method": "dft",
                 "functional": self.model.workflow_model.functional,
                 "basis": self.model.workflow_model.basis_set,
+                "harmonic" : self.model.workflow_model.harmonic,
             }
         )
         # The IsolatedAtomicEnergiesWorkChain forwards these options to each of
@@ -340,6 +343,7 @@ class ChemShellProcess:
                 "method": "dft" if self.model.workflow_model.use_dft else "hf",
                 "functional": self.model.workflow_model.functional,
                 "basis": self.model.workflow_model.basis_set,
+                "harmonic" : self.model.workflow_model.harmonic,
             }
         )
         # Optional QM/MM configuration.
@@ -403,6 +407,7 @@ class ChemShellProcess:
                 "method": "dft" if self.model.workflow_model.use_dft else "hf",
                 "functional": self.model.workflow_model.functional,
                 "basis": self.model.workflow_model.basis_set,
+                "harmonic" : self.model.workflow_model.harmonic,
             }
         )
 
@@ -448,6 +453,7 @@ class ChemShellProcess:
                 "method": "dft" if self.model.workflow_model.use_dft else "hf",
                 "functional": self.model.workflow_model.functional,
                 "basis": self.model.workflow_model.basis_set,
+                "harmonic" : self.model.workflow_model.harmonic,
             }
         if self.model.workflow_model.qm_theory.name.lower() == "nwchem":
             if self.model.workflow_model.nw_dispersion:
@@ -483,6 +489,7 @@ class ChemShellProcess:
                 "method": "dft" if self.model.workflow_model.esp_use_dft else "hf",
                 "functional": self.model.workflow_model.esp_functional,
                 "basis": self.model.workflow_model.esp_basis_set,
+                "harmonic" : self.model.workflow_model.harmonic,
             }
         )
 
@@ -553,6 +560,7 @@ class ChemShellProcess:
                 "method": "dft" if self.model.workflow_model.qmmm_use_dft else "hf",
                 "functional": self.model.workflow_model.qmmm_functional,
                 "basis": self.model.workflow_model.qmmm_basis_set,
+                "harmonic" : self.model.workflow_model.harmonic,
             }
 
         qmmm_parameters = {

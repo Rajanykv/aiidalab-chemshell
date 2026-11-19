@@ -8,7 +8,7 @@ class BasisSetOptions(Enum):
     """Pre-defined basis set levels for simplified ChemShell inputs."""
 
     FAST = 0
-    BALANCED = auto()
+    #BALANCED = auto()
     QUALITY = auto()
 
     @property
@@ -16,11 +16,12 @@ class BasisSetOptions(Enum):
         """Convert enum value to a string representation for ChemShell input."""
         match self:
             case BasisSetOptions.FAST:
-                return "3-21G"
-            case BasisSetOptions.BALANCED:
-                return "cc-pvdz"
+                return "def2-svp"
+            #case BasisSetOptions.BALANCED:
+            #    return "cc-pvdz"
             case BasisSetOptions.QUALITY:
-                return "aug-cc-pvtz"
+                #return "aug-cc-pvtz"
+                return "def2-tzvp"
             case "":
                 return ""
 
@@ -29,12 +30,19 @@ class BasisSetOptions(Enum):
         match self:
             case BasisSetOptions.FAST:
                 return "BLYP"
-            case BasisSetOptions.BALANCED:
-                return "B3LYP"
             case BasisSetOptions.QUALITY:
                 return "B3LYP"
             case "":
                 return ""
+    @property
+    def harmonic(self) -> bool:
+        match self:
+            case BasisSetOptions.FAST:
+                return True
+            case BasisSetOptions.QUALITY:
+                return True
+            case "":
+                return False
 
 class WorkflowOptions(IntEnum):
     """Enum defining the available ChemShell based AiiDA workflows."""
