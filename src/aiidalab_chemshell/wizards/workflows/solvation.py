@@ -475,27 +475,27 @@ class SolvationWidget(ipw.VBox):
         )
         link((self.model, "md_time_step"), (self.mdtime_step, "value"))
 
-        self.length_npt = ipw.IntText(
-            value =5,
-            description ="NPT Duration( Fs )",
-            disabled = False,
-            layout = shared_layout,
-            style = shared_style,
-        )
-        link((self.model, "md_length_npt"), (self.length_npt, "value"))
-
         self.length_nvt = ipw.IntText(
-            value =5,
-            description ="NVT Duration( Fs )",
+            value =20000,
+            description ="NVT Steps",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
         )
         link((self.model, "md_length_nvt"), (self.length_nvt, "value"))
 
+        self.length_npt = ipw.IntText(
+            value =40000,
+            description ="NPT Steps",
+            disabled = False,
+            layout = shared_layout,
+            style = shared_style,
+        )
+        link((self.model, "md_length_npt"), (self.length_npt, "value"))
+
         self.length_tot_run = ipw.IntText(
-            value =100,
-            description ="Production Run Duration( Fs )",
+            value =100000,
+            description ="Production Run Steps",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
@@ -511,23 +511,32 @@ class SolvationWidget(ipw.VBox):
         )
         link((self.model, "md_max_ncycles"), (self.length_ncycles, "value"))
 
+        self.n_minimise_nvt = ipw.IntText(
+            value =1000,
+            description ="NVT minimisation steps",
+            disabled = False,
+            layout = shared_layout,
+            style = shared_style,
+        )
+        link((self.model, "md_minimisation_nvt"), (self.n_minimise_nvt, "value"))
+
         self.n_minimise_npt = ipw.IntText(
-            value =10,
-            description ="NPT minimise duration( Fs )",
+            value =1000,
+            description ="NPT minimisation steps",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
         )
         link((self.model, "md_minimisation_npt"), (self.n_minimise_npt, "value"))
 
-        self.n_minimise_nvt = ipw.IntText(
-            value =10,
-            description ="NVT minimise durtion( Fs )",
+        self.minimise_freq = ipw.IntText(
+            value =25,
+            description ="Minimisation frequency",
             disabled = False,
             layout = shared_layout,
             style = shared_style,
         )
-        link((self.model, "md_minimisation_nvt"), (self.n_minimise_nvt, "value"))
+        link((self.model, "md_minimise_freq"), (self.minimise_freq, "value"))
 
         self.n_snapshots = ipw.IntText(
             value =10,
@@ -548,7 +557,7 @@ class SolvationWidget(ipw.VBox):
         #link((self.model, "md_solutes_dist"), (self.solutes_dist, "value"))
 
         self.padding = ipw.FloatText(
-            value =20.0,
+            value =15.0,
             description ="Padding( Angstrom )",
             disabled = False,
             layout = shared_layout,
@@ -576,7 +585,7 @@ class SolvationWidget(ipw.VBox):
 
         self.esp_container = ipw.VBox([self.chargefit_npoints, self.chargefit_type, self.chargefit_tolerance, self.chargefit_vdw_scale, self.chargefit_nlayers])
 
-        self.md_container = ipw.VBox([self.temperature, self.length_npt, self.length_nvt, self.n_minimise_nvt, self.n_minimise_npt, self.length_tot_run, self.mdtime_step, self.n_snapshots, self.padding, self.rcut,])
+        self.md_container = ipw.VBox([self.padding, self.rcut, self.n_minimise_nvt, self.length_nvt, self.n_minimise_npt, self.length_npt, self.minimise_freq, self.length_tot_run, self.mdtime_step, self.temperature, self.n_snapshots,])
 
         self.shell_radius = ipw.FloatText(
             value =20.0,

@@ -519,20 +519,22 @@ class ChemShellProcess:
         builder.mm_parameters = Dict(mm_parameters)
 
         md_parameters = {
-            "npt" : {"length" : self.model.workflow_model.md_length_npt,
-                    "minimisation" :self.model.workflow_model.md_minimisation_npt,
-                   },
-            "nvt" : { "length" : self.model.workflow_model.md_length_nvt,
+            "timestep" : self.model.workflow_model.md_time_step,
+            "nvt" : { "length" : self.model.workflow_model.md_length_nvt*self.model.workflow_model.md_time_step,
                       "minimisation" : self.model.workflow_model.md_minimisation_nvt,
                    },
-            "production" : { "length" : self.model.workflow_model.md_length_production,
+            "npt" : { "length" : self.model.workflow_model.md_length_npt*self.model.workflow_model.md_time_step,
+                    "minimisation" :self.model.workflow_model.md_minimisation_npt,
+                   },
+            "production" : {
+              "length" : self.model.workflow_model.md_length_production*self.model.workflow_model.md_time_step,
                    },
             "minimise" : {'stepsize': self.model.workflow_model.md_minimise_step,
+                          'frequency' : self.model.workflow_model.md_minimise_freq,
                    },
             "padding" : self.model.workflow_model.md_padding,
             "nsnapshots" : self.model.workflow_model.md_nsnapshots,
             "freeze_solute" : self.model.workflow_model.md_freeze_solute,
-            "timestep" : self.model.workflow_model.md_time_step,
             #"solutes_dist" : self.model.workflow_model.md_solutes_dist,
 	    #"max_ncycles" : self.model.workflow_model.md_max_ncycles,
             #"fixed_npt" : self.model.workflow_model.md_fixed_npt,
