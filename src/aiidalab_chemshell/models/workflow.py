@@ -48,10 +48,10 @@ class ChemShellWorkflowModel(HasTraits):
     chargefit_vdw_scale = Float(1.5, allow_none=True)
     chargefit_nlayers = Int(1, allow_none=True)
     chargefit_tolerance = Float(1e-10, allow_none=False)
-    esp_use_dft = Bool(False).tag(sync=True)
+    esp_use_dft = Bool(True).tag(sync=True)
     esp_functional = Unicode("BLYP", allow_none=False)
     #esp_basis_set = Unicode("6-31g*", allow_none=False)
-    esp_basis_set = Unicode("3-21g", allow_none=False)
+    esp_basis_set = Unicode("def2-svp", allow_none=False)
 
     default_guide = ""
 
