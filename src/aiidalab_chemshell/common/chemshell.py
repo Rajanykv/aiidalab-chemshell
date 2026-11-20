@@ -93,7 +93,7 @@ class WorkflowOptions(IntEnum):
                 return "ChemShell"
 
 #Props = namedtuple("Props", ["filepath", "label", "cube_length", "name"])
-Props = namedtuple("Props", ["label", "cube_length", "name", "active_radius"])
+Props = namedtuple("Props", ["label", "cube_length", "name", "qm_radius"])
 dataroot = Path("/opt/chemsh-py/data/solvents")
 class SolventBoxOptions(Enum):
     """Enum defining the available Solvent Boxes."""
@@ -110,12 +110,12 @@ class SolventBoxOptions(Enum):
         match self:
             case SolventBoxOptions.WATER80:
                 #return Props(dataroot/"water-box80-100ns.pqr", "Water Box 80A cube", 80, "water")
-                return Props("Water", 220, "water", 4.0)
+                return Props("Water", 220, "water", 3.0)
             case SolventBoxOptions.HEPTANE80:
-                return Props("Heptane", 80, "heptane", 5.0)
+                return Props("Heptane", 80, "heptane", 3.0)
             case SolventBoxOptions.METHANOL80:
-                return Props("Methanol", 80, "methanol", 4.5)
+                return Props("Methanol", 80, "methanol", 3.0)
             case SolventBoxOptions.CHLOROFORM80:
-                return Props("Chloroform", 80, "chloroform", 4.5)
+                return Props("Chloroform", 80, "chloroform", 3.0)
             case _:
                 return Props("Select",0,"Select", "Select")
