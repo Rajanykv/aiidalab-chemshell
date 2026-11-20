@@ -438,7 +438,7 @@ class SolvationWidget(ipw.VBox):
         link((self.model, "chargefit_nlayers"), (self.chargefit_nlayers, "value"))
 
         self.rcut = ipw.Combobox(
-            value ="12",
+            value ="Default",
             description ="Rcut( Angstrom )",
             disabled = False,
             layout = shared_layout,
@@ -641,10 +641,12 @@ class SolvationWidget(ipw.VBox):
                self.model.md_length_npt = self.model.md_length_npt_l
                self.model.md_length_nvt = self.model.md_length_nvt_l
                self.model.md_length_production = self.model.md_length_production_l
+               self.rcut.value = "12"
             else:
                self.model.md_length_npt = self.model.md_length_npt_s
                self.model.md_length_nvt = self.model.md_length_nvt_s
                self.model.md_length_production = self.model.md_length_production_s
+               self.rcut.value = "Default"
         self.md_quick_dropdown.observe(_on_md_quick, names='value')
 
         self.qmmm_basis_string = ipw.Text(
