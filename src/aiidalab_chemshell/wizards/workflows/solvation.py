@@ -438,7 +438,7 @@ class SolvationWidget(ipw.VBox):
         link((self.model, "chargefit_nlayers"), (self.chargefit_nlayers, "value"))
 
         self.rcut = ipw.Combobox(
-            value ="Default",
+            value ="12",
             description ="Rcut( Angstrom )",
             disabled = False,
             layout = shared_layout,
