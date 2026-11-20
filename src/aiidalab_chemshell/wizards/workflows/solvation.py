@@ -691,7 +691,7 @@ class SolvationWidget(ipw.VBox):
             style = shared_style,
         )
         link((self.model, "qm_region_quick"), (self.qm_selection_quick, "value"))
-        self.radius_options = [b.properties.active_radius for b in SolventBoxOptions] + ["Enter"]
+        self.radius_options = [b.properties.qm_radius for b in SolventBoxOptions] + ["Enter"]
         def _on_qm_selection(change: dict) -> None:
             if change["new"] ==  False:
                self.model.qm_region_radius = self.radius_options[self.solventbox_dropdown.index]
@@ -729,7 +729,7 @@ class SolvationWidget(ipw.VBox):
         self.qmmm_opt_container = ipw.VBox([ self.qmmm_opt_cycles, self.qmmm_energy_cycles,])
         self.qmmm_qm_container = ipw.VBox([self.qmmm_method_dropdown, self.qmmm_basis_string, self.qmmm_functional, self.multiplicity, self.dispersion, self.energy_tol])
 
-        self.qmmm_adv_container = ipw.VBox([self.shell_radius, self.qm_radius])
+        self.qmmm_adv_container = ipw.VBox([self.shell_radius, self.active_radius])
 
         self.qmmm_container = ipw.VBox([self.qmmm_label, self.qmmm_dryrun, self.snapshot_box, self.qm_selection_quick, self.advanced_qmmm_options,])
 
